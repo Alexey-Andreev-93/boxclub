@@ -131,15 +131,25 @@
     font-size: 1.1rem;
     margin-bottom: 2rem;
   }
-  
+
+  .reviews__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    overflow: visible;
+    padding-bottom: 0;
+  }
+
   .review-card {
+    flex: none;
+    max-width: none;
     padding: 1.25rem;
   }
-  
+
   .review-card__author {
     gap: 0.8rem;
   }
-  
+
   .review-card__avatar {
     width: 45px;
     height: 45px;

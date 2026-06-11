@@ -547,6 +547,10 @@
     font-size: 1.5rem;
   }
 
+  .map-iframe-container {
+    min-height: 350px;
+  }
+
   .address-card {
     flex-direction: column;
     text-align: center;
@@ -590,6 +594,15 @@
   .map-actions {
     flex-direction: column;
   }
+
+  .map-actions > div {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .map-actions .btn--small {
+    min-width: 0;
+  }
 }
 
 /* Компактный CSS для преимуществ */
@@ -600,6 +613,17 @@
   box-shadow: var(--shadow);
   margin-bottom: 2rem;
   text-align: center;
+  overflow: hidden;
+}
+
+@media (max-width: 480px) {
+  .contact__benefits {
+    padding: 1.5rem;
+  }
+
+  .benefits-list {
+    grid-template-columns: 1fr;
+  }
 }
 
 .contact__benefits h3 {

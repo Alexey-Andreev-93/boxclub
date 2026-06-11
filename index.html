@@ -95,20 +95,20 @@
     <p class="preloader__text">Загружаем зал и подбираем перчатки по размеру…</p>
   </div>
   <!-- Хедер -->
-  <header class="header" x-data="header">
+  <header class="header" x-data="header" :class="{ 'header--scrolled': scrolled }">
     <nav class="header__nav container">
       <!-- Логотип -->
-      <div class="header__logo">
-          <a href="/boxclub/"><i class="fas fa-fist-raised header__logo-icon"></i></a>
+      <a href="/boxclub/" class="header__logo">
+        <i class="fas fa-fist-raised header__logo-icon"></i>
         <div class="header__logo-text">
           <span class="header__logo-title">Школа Бокса</span>
           <span class="header__logo-subtitle">Абдуллы Рамазанова</span>
         </div>
-      </div>
+      </a>
 
       <!-- Навигация -->
       <div class="header__content">
-        <div class="header__menu" :class="{ 'header__menu--active': menuOpen }">
+        <div id="header__menu" class="header__menu" :class="{ 'header__menu--active': menuOpen }">
           <a href="#about" class="header__link" @click="menuOpen = false">
             <i class="fas fa-info-circle"></i> О школе
           </a>
@@ -131,7 +131,10 @@
 
         <!-- Гамбургер -->
         <button class="header__hamburger" @click="menuOpen = !menuOpen"
-          :class="{ 'header__hamburger--active': menuOpen }">
+          :class="{ 'header__hamburger--active': menuOpen }"
+          aria-label="Открыть меню"
+          :aria-expanded="menuOpen.toString()"
+          aria-controls="header__menu">
           <span></span>
           <span></span>
           <span></span>
