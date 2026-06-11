@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Школа Бокса Абдуллы Рамазанова - Профессиональные тренировки в Новом Девяткино</title>
+
+  <!-- Основные мета-теги -->
+  <meta name="description"
+    content="Профессиональные тренировки по боксу в Новом Девяткино. Индивидуальный подход для детей и взрослых. Первая тренировка бесплатно!">
+  <meta name="keywords"
+    content="бокс, тренировки по боксу, Новое Девяткино, Абдулла Рамазанов, спорт, секция бокса, бокс для детей">
+  <meta name="author" content="Школа Бокса Абдуллы Рамазанова">
+
+  <!-- Локальный SEO -->
+  <meta name="geo.region" content="RU-LEN">
+  <meta name="geo.placename" content="Новое Девяткино, Ленинградская область">
+  <meta name="geo.position" content="59.932939;30.455839">
+  <meta name="ICBM" content="59.932939, 30.455839">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Школа Бокса Абдуллы Рамазанова - Профессиональные тренировки в Новом Девяткино">
+  <meta property="og:description"
+    content="Профессиональные тренировки по боксу для детей и взрослых. Первая тренировка бесплатно! Индивидуальный подход.">
+  <meta property="og:image" content="https://alexey-andreev-93.github.io/boxclub/images/og-image.jpg">
+  <meta property="og:url" content="https://alexey-andreev-93.github.io/boxclub">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Школа Бокса Абдуллы Рамазанова">
+  <meta property="og:locale" content="ru_RU">
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Школа Бокса Абдуллы Рамазанова">
+  <meta name="twitter:description" content="Профессиональные тренировки по боксу в Новом Девяткино">
+  <meta name="twitter:image" content="https://ваш-домен.ru/images/og-image.jpg">
+
+  <!-- Предзагрузка -->
+  <link rel="preload" href="css/main.css" as="style">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <!-- Фавикон -->
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
+  <!-- Шрифты -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Rubik+Dirt&family=Roboto+Slab:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+  <!-- Наши стили -->
+  <link rel="stylesheet" href="/css/main.css">
+
+  <!-- Структурированные данные -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SportsActivityLocation",
+    "name": "Школа Бокса Абдуллы Рамазанова",
+    "description": "Профессиональные тренировки по боксу для детей и взрослых в Новом Девяткино",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "ул. Славы, д. 1",
+      "addressLocality": "Новое Девяткино",
+      "addressRegion": "Ленинградская область",
+      "postalCode": "188742"
+    },
+    "telephone": "+79671789898",
+    "openingHours": ["Mo-Fr 08:00-22:00", "Sa-Su 09:00-20:00"],
+    "priceRange": "1000-6000 ₽",
+    "url": "https://alexey-andreev-93.github.io/boxclub",
+    "geo": {
+      "@type": "GeoCoordinates",
+      "latitude": 59.932939,
+      "longitude": 30.455839
+    }
+  }
+  </script>
+</head>
+
+<body class="body--loading">
+  <!-- Прелоадер -->
+  <div id="preloader" class="preloader">
+    <div class="preloader__logo">
+      <div class="preloader__logo-icon">
+        <i class="fas fa-fist-raised"></i>
+      </div>
+      <div class="preloader__logo-text">
+        <span class="preloader__logo-title">Школа бокса</span>
+        <span class="preloader__logo-subtitle">Абдуллы Рамазанова</span>
+      </div>
+    </div>
+    <div class="preloader__spinner"></div>
+    <p class="preloader__text">Загружаем зал и подбираем перчатки по размеру…</p>
+  </div>
+  <!-- Хедер -->
+  <header class="header" x-data="header">
+    <nav class="header__nav container">
+      <!-- Логотип -->
+      <div class="header__logo">
+          <a href="/boxclub/"><i class="fas fa-fist-raised header__logo-icon"></i></a>
+        <div class="header__logo-text">
+          <span class="header__logo-title">Школа Бокса</span>
+          <span class="header__logo-subtitle">Абдуллы Рамазанова</span>
+        </div>
+      </div>
+
+      <!-- Навигация -->
+      <div class="header__content">
+        <div class="header__menu" :class="{ 'header__menu--active': menuOpen }">
+          <a href="#about" class="header__link" @click="menuOpen = false">
+            <i class="fas fa-info-circle"></i> О школе
+          </a>
+          <a href="#training" class="header__link" @click="menuOpen = false">
+            <i class="fas fa-dumbbell"></i> Тренировки
+          </a>
+          <a href="#gallery" class="header__link" @click="menuOpen = false">
+            <i class="fas fa-images"></i> Галерея
+          </a>
+          <a href="#reviews" class="header__link" @click="menuOpen = false">
+            <i class="fas fa-comments"></i> Отзывы
+          </a>
+          <a href="#contact" class="header__link" @click="menuOpen = false">
+            <i class="fas fa-map-marker-alt"></i> Контакты
+          </a>
+          <a href="tel:+79671789898" class="btn btn--phone shimmer" @click="menuOpen = false">
+            <i class="fas fa-phone"></i> +7 (967) 178-98-98
+          </a>
+        </div>
+
+        <!-- Гамбургер -->
+        <button class="header__hamburger" @click="menuOpen = !menuOpen"
+          :class="{ 'header__hamburger--active': menuOpen }">
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+      </div>
+    </nav>
+  </header>
+
+  <!-- Герой секция -->
+  <section id="hero" class="hero" x-data="hero">
+    <!-- Фон -->
+    <div class="hero__bg"></div>
+
+    <div class="container">
+      <div class="hero__content">
+        <!-- Текстовая часть -->
+        <div class="hero__text">
+          <h1 class="hero__title">
+            Стань <span class="hero__accent">чемпионом</span><br>
+            в школе бокса<br>
+            <span class="hero__name">Абдуллы Рамазанова</span>
+          </h1>
+
+          <p class="hero__description">
+            Профессиональные тренировки в Новом Девяткино.
+            Развивай силу, выносливость и уверенность в себе.
+          </p>
+
+          <!-- Преимущества -->
+          <div class="hero__features">
+            <div class="hero__feature">
+              <div class="hero__feature-icon">
+                <i class="fas fa-fist-raised"></i>
+              </div>
+              <span class="hero__feature-text">Профессиональные тренеры</span>
+            </div>
+            <div class="hero__feature">
+              <div class="hero__feature-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <span class="hero__feature-text">Групповые и индивидуальные занятия</span>
+            </div>
+            <div class="hero__feature">
+              <div class="hero__feature-icon">
+                <i class="fas fa-bullseye"></i>
+              </div>
+              <span class="hero__feature-text">Первая тренировка бесплатно</span>
+            </div>
+          </div>
+
+          <!-- Кнопки -->
+          <div class="hero__buttons">
+            <a href="#contact" class="btn btn--primary shimmer">
+              <i class="fas fa-bullseye btn__icon"></i>
+              Записаться на тренировку
+            </a>
+            <a href="#reviews" class="btn btn--secondary">
+              <i class="fas fa-info-circle btn__icon"></i>
+              Узнать больше
+            </a>
+          </div>
+        </div>
+
+        <!-- Визуальная часть -->
+        <div class="hero__visual">
+          <div class="hero__image">
+          </div>
+
+          <!-- Галерея достижений -->
+          <template x-for="achievement in achievements" :key="achievement.image">
+            <div class="hero__achievement" :class="achievement.positionClass" role="button" tabindex="0"
+              @click="openModal(achievement)" @keydown.enter.prevent="openModal(achievement)"
+              @keydown.space.prevent="openModal(achievement)" @mouseenter="pauseAnimation($event)"
+              @mouseleave="resumeAnimation($event)">
+
+              <img :src="achievement.image" :alt="achievement.title">
+              <div class="hero__achievement-tooltip" x-text="achievement.title"></div>
+            </div>
+          </template>
+
+
+          <!-- Статистика -->
+          <div class="hero__stats">
+            <div class="hero__stat">
+              <div class="hero__stat-number" x-text="stats.students">0</div>
+              <div class="hero__stat-label">учеников</div>
+            </div>
+            <div class="hero__stat">
+              <div class="hero__stat-number" x-text="stats.experience">0</div>
+              <div class="hero__stat-label">лет опыта</div>
+            </div>
+            <div class="hero__stat">
+              <div class="hero__stat-number" x-text="stats.price">0 ₽</div>
+              <div class="hero__stat-label">первая тренировка</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Скролл-хинт -->
+    <div class="hero__scroll-hint">
+      <div class="hero__scroll-hint-icon">
+        <i class="fas fa-chevron-down"></i>
+      </div>
+      <span>Прокрутите вниз</span>
+    </div>
+
+    <!-- Модальное окно для фото -->
+    <div x-show="modal.open" x-transition class="modal modal--image" @click="closeModal()"
+      @keydown.escape.window="closeModal()">
+      <div class="modal__content" role="dialog" aria-modal="true" :aria-label="modal.title" @click.stop>
+        <button @click="closeModal()" class="modal__close">
+          <i class="fas fa-times"></i>
+        </button>
+        <div class="modal-image">
+          <img :src="modal.image" :alt="modal.title" />
+          <h3 class="modal-image__title" x-text="modal.title"></h3>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция О школе -->
+  <section id="about" class="section about">
+    <div class="container">
+      <h2 class="section__title">О нашей школе</h2>
+
+      <div class="about__content">
+        <!-- Горизонтальный аккордеон -->
+        <div class="about__gallery" x-data="aboutGallery">
+          <div class="trainers-accordion">
+            <!-- Тренер 1 -->
+            <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 1 }" @click="toggleTrainer(1)"
+              @mouseenter="activateTrainer(1)" style="background-image: url('images/trainer/trainer-1.jpg')">
+              <div class="trainer-card__content">
+                <div class="trainer-card__info" data-name="Абдулла Рамазанов">
+                  <h3 class="trainer-card__name">Абдулла Рамазанов</h3>
+                  <p class="trainer-card__title">Главный тренер</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Тренер 2 -->
+            <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 2 }" @click="toggleTrainer(2)"
+              @mouseenter="activateTrainer(2)" style="background-image: url('images/trainer/trainer-2.jpg')">
+              <div class="trainer-card__content">
+                <div class="trainer-card__info" data-name="Мария Иванова">
+                  <h3 class="trainer-card__name">Мария Иванова</h3>
+                  <p class="trainer-card__title">Тренер по ОФП</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Тренер 3 -->
+            <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 3 }" @click="toggleTrainer(3)"
+              @mouseenter="activateTrainer(3)" style="background-image: url('images/trainer/trainer-3.jpg')">
+              <div class="trainer-card__content">
+                <div class="trainer-card__info" data-name="Дмитрий Петров">
+                  <h3 class="trainer-card__name">Дмитрий Петров</h3>
+                  <p class="trainer-card__title">Тренер по спаррингу</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Текстовая часть -->
+        <div class="about__text">
+          <div class="about__description">
+            <p>Школа бокса Абдуллы Рамазанова — это профессиональная тренировочная база в Новом Девяткино, где мы
+              воспитываем чемпионов и помогаем каждому ученику раскрыть свой потенциал.</p>
+
+            <p>Наша философия — индивидуальный подход к каждому спортсмену, независимо от возраста и уровня подготовки.
+              Мы создаем атмосферу, где бокс становится не просто спортом, а образом жизни.</p>
+          </div>
+
+          <!-- Преимущества -->
+          <div class="about__features">
+            <div class="about__feature">
+              <div class="about__feature-icon">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+              <div class="about__feature-content">
+                <h3>Безопасность</h3>
+                <p>Современное оборудование и профессиональный контроль на каждой тренировке</p>
+              </div>
+            </div>
+
+            <div class="about__feature">
+              <div class="about__feature-icon">
+                <i class="fas fa-chart-line"></i>
+              </div>
+              <div class="about__feature-content">
+                <h3>Прогресс</h3>
+                <p>Постепенное увеличение нагрузок и регулярный мониторинг результатов</p>
+              </div>
+            </div>
+
+            <div class="about__feature">
+              <div class="about__feature-icon">
+                <i class="fas fa-users"></i>
+              </div>
+              <div class="about__feature-content">
+                <h3>Комьюнити</h3>
+                <p>Дружеская атмосфера и поддержка единомышленников</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Кнопка -->
+          <div class="about__actions">
+            <a href="#contact" class="btn btn--primary shimmer">
+              <i class="fas fa-bullseye btn__icon"></i>
+              Начать тренировки
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Стоимость тренировок -->
+  <section id="training" class="section training">
+    <div class="container">
+      <h2 class="section__title">Стоимость тренировок</h2>
+
+      <div class="training__content" x-data="trainingPricing">
+        <!-- Табы -->
+        <div class="training-tabs">
+          <template x-for="(category, index) in categories" :key="category.id">
+            <button class="training-tab" :class="{ 'training-tab--active': activeCategory === category.id }"
+              @click="setActiveCategory(category.id)">
+              <i :class="category.icon"></i>
+              <span x-text="category.title"></span>
+            </button>
+          </template>
+        </div>
+
+        <!-- Контент табов -->
+        <div class="training-tab-content">
+          <template x-for="category in categories" :key="category.id">
+            <div x-show="activeCategory === category.id" class="pricing-table">
+              <template x-for="plan in category.plans" :key="plan.id">
+                <div class="pricing-card" :class="{ 'pricing-card--popular': plan.popular }">
+                  <div x-show="plan.popular" class="pricing-card__badge" x-text="plan.badgeText"></div>
+
+                  <div class="pricing-card__header">
+                    <h3 x-text="plan.title"></h3>
+                    <div class="pricing-card__price" x-text="plan.price"></div>
+                    <div class="pricing-card__per-class" x-text="plan.perClass"></div>
+                  </div>
+
+                  <ul class="pricing-card__features">
+                    <template x-for="feature in plan.features" :key="feature">
+                      <li>
+                        <i class="fas fa-check"></i>
+                        <span x-text="feature"></span>
+                      </li>
+                    </template>
+                  </ul>
+
+                  <button class="btn" :class="plan.popular ? 'btn--primary' : 'btn--outline'"
+                    @click="scrollToContact(category.title, plan.title)">
+                    <span x-text="plan.buttonText"></span>
+                  </button>
+                </div>
+              </template>
+            </div>
+          </template>
+        </div>
+
+        <!-- Кнопка расписания -->
+        <div class="training__schedule-cta">
+          <button class="btn btn--outline" @click="openScheduleModal">
+            <i class="fas fa-calendar-alt btn__icon"></i>
+            Расписание занятий
+          </button>
+        </div>
+
+        <!-- Модальное окно расписания -->
+        <div class="modal modal--schedule" x-cloak x-show="scheduleModalOpen" x-transition @click="closeScheduleModal">
+          <div class="modal__content" role="dialog" aria-modal="true" aria-label="Расписание занятий" @click.stop>
+            <button @click="closeScheduleModal" class="modal__close">
+              <i class="fas fa-times"></i>
+            </button>
+
+            <div class="modal-schedule">
+              <h3 class="modal-schedule__title">Расписание групповых тренировок</h3>
+              <p class="modal-schedule__note">
+                Расписание может незначительно меняться. Актуальное время лучше уточнить у тренера по телефону или в мессенджерах.
+              </p>
+
+              <div class="modal-schedule__grid">
+                <div class="modal-schedule__column">
+                  <h4>Дети (7–12 лет)</h4>
+                  <ul>
+                    <li><strong>Пн, Ср, Пт</strong> — 17:00–18:00</li>
+                    <li><strong>Сб</strong> — 11:00–12:00</li>
+                  </ul>
+                </div>
+
+                <div class="modal-schedule__column">
+                  <h4>Подростки (13–17 лет)</h4>
+                  <ul>
+                    <li><strong>Пн, Ср, Пт</strong> — 18:00–19:30</li>
+                    <li><strong>Сб</strong> — 12:00–13:30</li>
+                  </ul>
+                </div>
+
+                <div class="modal-schedule__column">
+                  <h4>Взрослые (18+)</h4>
+                  <ul>
+                    <li><strong>Вт, Чт</strong> — 19:30–21:00</li>
+                    <li><strong>Сб</strong> — 13:30–15:00</li>
+                  </ul>
+                </div>
+
+                <div class="modal-schedule__column">
+                  <h4>Индивидуальные тренировки</h4>
+                  <ul>
+                    <li>По предварительной записи</li>
+                    <li>Утренние и дневные слоты</li>
+                  </ul>
+                </div>
+              </div>
+
+              <div class="modal-schedule__actions">
+                <a href="#contact" class="btn btn--primary" @click="closeScheduleModal">
+                  <i class="fas fa-bullseye btn__icon"></i>
+                  Записаться на тренировку
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция Галерея -->
+  <section id="gallery" class="section gallery" x-data="gallery">
+    <div class="container">
+      <h2 class="section__title">Галерея побед</h2>
+      <p class="section__subtitle">Лучшие моменты из жизни нашей школы бокса</p>
+
+      <!-- Фильтры -->
+      <div class="gallery__filters">
+        <button class="gallery__filter active" data-filter="all" @click="setFilter('all')">
+          <i class="fas fa-star"></i>
+          Все фото
+        </button>
+        <button class="gallery__filter" data-filter="training" @click="setFilter('training')">
+          <i class="fas fa-dumbbell"></i>
+          Тренировки
+        </button>
+        <button class="gallery__filter" data-filter="competitions" @click="setFilter('competitions')">
+          <i class="fas fa-trophy"></i>
+          Соревнования
+        </button>
+        <button class="gallery__filter" data-filter="team" @click="setFilter('team')">
+          <i class="fas fa-users"></i>
+          Команда
+        </button>
+      </div>
+
+      <!-- Сетка галереи -->
+      <div class="gallery__grid">
+        <template x-for="item in displayedItems" :key="item.id">
+          <div class="gallery__item"
+            :class="['gallery__item--' + item.type, { 'gallery__item--featured': item.featured }]"
+            @click="openLightbox(item)" @mouseenter="startFloat($el)" @mouseleave="stopFloat($el)">
+
+            <div class="gallery__image-container">
+              <img :src="item.image" :alt="item.title" class="gallery__image" />
+
+              <!-- Эффект наведения -->
+              <div class="gallery__overlay">
+                <div class="gallery__content">
+                  <h3 x-text="item.title"></h3>
+                  <p x-text="item.description"></p>
+                  <div class="gallery__badge" x-text="item.badge"></div>
+                </div>
+                <div class="gallery__actions">
+                  <button class="gallery__zoom">
+                    <i class="fas fa-expand"></i>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Блик -->
+              <div class="gallery__shine"></div>
+            </div>
+
+            <!-- Декоративные элементы -->
+            <div class="gallery__corner gallery__corner--tl"></div>
+            <div class="gallery__corner gallery__corner--tr"></div>
+            <div class="gallery__corner gallery__corner--bl"></div>
+            <div class="gallery__corner gallery__corner--br"></div>
+          </div>
+        </template>
+      </div>
+
+      <!-- Пагинация -->
+      <div class="gallery__pagination" x-show="totalPages > 1">
+        <button class="gallery__page-btn" @click="prevPage" :disabled="currentPage === 0">
+          <i class="fas fa-chevron-left"></i>
+        </button>
+
+        <div class="gallery__pages">
+          <template x-for="page in totalPages" :key="page">
+            <button class="gallery__page" :class="{ 'gallery__page--active': currentPage === page - 1 }"
+              @click="goToPage(page - 1)" x-text="page"></button>
+          </template>
+        </div>
+
+        <button class="gallery__page-btn" @click="nextPage" :disabled="currentPage === totalPages - 1">
+          <i class="fas fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Лайтбокс -->
+    <div class="lightbox" x-show="lightbox.open" x-transition>
+      <div class="lightbox__overlay" @click="closeLightbox"></div>
+
+      <div class="lightbox__content">
+        <button class="lightbox__close" @click="closeLightbox">
+          <i class="fas fa-times"></i>
+        </button>
+
+        <div class="lightbox__image-container">
+          <img :src="lightbox.image" :alt="lightbox.title" class="lightbox__image" />
+
+          <button class="lightbox__nav lightbox__nav--prev" @click="prevImage">
+            <i class="fas fa-chevron-left"></i>
+          </button>
+          <button class="lightbox__nav lightbox__nav--next" @click="nextImage">
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <div class="lightbox__info">
+          <h3 x-text="lightbox.title"></h3>
+          <p x-text="lightbox.description"></p>
+          <div class="lightbox__meta">
+            <span class="lightbox__date" x-text="lightbox.date"></span>
+            <span class="lightbox__category" x-text="lightbox.category"></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция Отзывы -->
+  <section id="reviews" class="section reviews" x-data="reviews">
+    <div class="container">
+      <h2 class="section__title">Отзывы учеников</h2>
+      <p class="reviews__subtitle">Что говорят о наших тренировках</p>
+
+      <div class="reviews__grid">
+        <template x-for="review in reviews" :key="review.id">
+          <div class="review-card">
+            <div class="review-card__content">
+              <div class="review-card__stars">
+                <template x-for="star in 5">
+                  <i class="fas fa-star"></i>
+                </template>
+              </div>
+              <p class="review-card__text" x-text="review.text"></p>
+            </div>
+            <div class="review-card__author">
+              <img :src="review.avatar" :alt="review.name" class="review-card__avatar">
+              <div class="review-card__info">
+                <h4 x-text="review.name"></h4>
+                <p x-text="review.experience"></p>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div>
+  </section>
+
+  <!-- Секция Контакты -->
+  <section id="contact" class="section contact" itemscope itemtype="https://schema.org/SportsActivityLocation">
+    <div class="container">
+      <h2 class="section__title">Контакты</h2>
+      <p class="contact__subtitle">Выберите удобный способ связи</p>
+
+      <div class="contact__grid">
+        <!-- Левая колонка - Основные способы связи -->
+        <div class="contact__main">
+          <!-- Телефон -->
+          <div class="contact__method" itemprop="telephone">
+            <div class="contact__method-icon">
+              <i class="fas fa-phone"></i>
+            </div>
+            <div class="contact__method-content">
+              <h3>Позвонить</h3>
+              <a href="tel:+79671789898" class="contact__phone">+7 (967) 178-98-98</a>
+              <p>Прямой звонок тренеру</p>
+            </div>
+            <a href="tel:+79671789898" class="btn btn--primary btn--small contact__action-btn">
+              <i class="fas fa-phone"></i>
+              Позвонить
+            </a>
+          </div>
+
+          <!-- WhatsApp -->
+          <div class="contact__method">
+            <div class="contact__method-icon contact__method-icon--whatsapp">
+              <i class="fab fa-whatsapp"></i>
+            </div>
+            <div class="contact__method-content">
+              <h3>WhatsApp</h3>
+              <p>Быстрая связь через WhatsApp</p>
+              <span class="contact__status">Онлайн</span>
+            </div>
+            <a href="https://wa.me/79671789898?text=Здравствуйте! Хочу записаться на пробную тренировку по боксу"
+              class="btn btn--small contact__action-btn contact__action-btn--whatsapp" target="_blank" rel="noopener">
+              <i class="fab fa-whatsapp"></i>
+              Написать
+            </a>
+          </div>
+
+          <!-- Telegram -->
+          <div class="contact__method">
+            <div class="contact__method-icon contact__method-icon--telegram">
+              <i class="fab fa-telegram"></i>
+            </div>
+            <div class="contact__method-content">
+              <h3>Telegram</h3>
+              <p>Связь через Telegram</p>
+              <span class="contact__status">Онлайн</span>
+            </div>
+            <a href="https://t.me/scboxingnov" class="btn btn--small contact__action-btn contact__action-btn--telegram"
+              target="_blank" rel="noopener">
+              <i class="fab fa-telegram"></i>
+              Написать
+            </a>
+          </div>
+
+          <!-- ВКонтакте -->
+          <div class="contact__method">
+            <div class="contact__method-icon contact__method-icon--vk">
+              <i class="fab fa-vk"></i>
+            </div>
+            <div class="contact__method-content">
+              <h3>ВКонтакте</h3>
+              <p>Группа и сообщения ВК</p>
+              <span class="contact__status">Онлайн</span>
+            </div>
+            <a href="https://vk.com/scboxing" class="btn btn--small contact__action-btn contact__action-btn--vk"
+              target="_blank" rel="noopener">
+              <i class="fab fa-vk"></i>
+              Написать
+            </a>
+          </div>
+        </div>
+
+        <!-- Правая колонка - Информация -->
+        <div class="contact__info">
+          <div class="info-card">
+            <h3>Школа бокса в Новом Девяткино</h3>
+
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="info-content">
+                <strong>Адрес:</strong>
+                <p>Новое Девяткино, Ленинградская область</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-clock"></i>
+              </div>
+              <div class="info-content">
+                <strong>Время работы:</strong>
+                <p>Пн-Пт: 08:00-22:00</p>
+                <p>Сб-Вс: 09:00-20:00</p>
+              </div>
+            </div>
+
+            <div class="info-item">
+              <div class="info-icon">
+                <i class="fas fa-dumbbell"></i>
+              </div>
+              <div class="info-content">
+                <strong>Первая тренировка:</strong>
+                <p>Бесплатно для новых учеников</p>
+              </div>
+            </div>
+
+            <!-- Быстрые действия -->
+            <div class="quick-actions">
+              <h4>Быстрая запись:</h4>
+              <div class="quick-buttons">
+                <a href="https://wa.me/79671789898?text=Хочу записаться на пробную тренировку"
+                  class="btn btn--small quick-btn quick-btn--whatsapp" target="_blank" rel="noopener">
+                  <i class="fab fa-whatsapp"></i>
+                  WhatsApp
+                </a>
+                <a href="https://t.me/scboxingnov" class="btn btn--small quick-btn quick-btn--telegram" target="_blank"
+                  rel="noopener">
+                  <i class="fab fa-telegram"></i>
+                  Telegram
+                </a>
+                <a href="https://vk.com/scboxing" class="btn btn--small quick-btn quick-btn--vk" target="_blank"
+                  rel="noopener">
+                  <i class="fab fa-vk"></i>
+                  VK
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Компактная версия преимуществ -->
+      <div class="contact__benefits">
+        <h3>💬 Почему лучше писать в мессенджеры?</h3>
+        <div class="benefits-list">
+          <div class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Ответ в течение 15 минут</span>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Можно отправить фото/видео</span>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>История переписки сохраняется</span>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Удобно с мобильного телефона</span>
+          </div>
+          <div class="benefit-item">
+            <i class="fas fa-check-circle"></i>
+            <span>Без спама и рассылок</span>
+          </div>
+        </div>
+        <p class="benefits-note">Просто выберите WhatsApp, Telegram или VK - и пишите как в обычном чате!</p>
+      </div>
+
+      <!-- Карта -->
+      <div class="contact__map">
+        <h3>Как добраться</h3>
+        <div class="map-container">
+          <!-- Статичная карта Яндекс -->
+          <div class="map-iframe-container" style="position:relative;overflow:hidden;">
+            <a href="https://yandex.ru/maps/org/shkola_boksa_abdully_ramazanova/3987126645/?utm_medium=mapframe&utm_source=maps"
+              style="color:#eee;font-size:12px;position:absolute;top:0px;">Школа бокса Абдуллы Рамазанова
+            </a>
+
+            <a href="https://yandex.ru/maps/10174/saint-petersburg-and-leningrad-oblast/category/sports_club/184107297/?utm_medium=mapframe&utm_source=maps"
+              style="color:#eee;font-size:12px;position:absolute;top:14px;">Спортивный клуб, секция в Санкт‑Петербурге и
+              Ленинградской области
+            </a>
+
+            <iframe
+              src="https://yandex.ru/map-widget/v1/?ll=30.478373%2C60.059055&mode=search&oid=3987126645&ol=biz&z=19.15"
+              width="100%" height="100%" frameborder="1" allowfullscreen="true" style="position:relative;">
+            </iframe>
+          </div>
+
+          <!-- Информация о проезде -->
+          <div class="map-info">
+            <div class="address-card">
+              <div class="address-icon">
+                <i class="fas fa-map-marker-alt"></i>
+              </div>
+              <div class="address-details">
+                <h4>Адрес зала</h4>
+                <p class="address-street">ул. Славы, д. 1</p>
+                <p class="address-location">Новое Девяткино, Ленинградская область</p>
+              </div>
+            </div>
+
+            <div class="transport-details">
+              <h4>Как добраться</h4>
+
+              <div class="transport-option">
+                <div class="transport-icon">
+                  <i class="fas fa-train"></i>
+                </div>
+                <div class="transport-info">
+                  <strong>Метро "Девяткино"</strong>
+                  <p>15-20 минут пешком от станции</p>
+                </div>
+              </div>
+
+              <div class="transport-option">
+                <div class="transport-icon">
+                  <i class="fas fa-bus"></i>
+                </div>
+                <div class="transport-info">
+                  <strong>Автобусы</strong>
+                  <p>№ 205, 562 до остановки "Улица Славы"</p>
+                </div>
+              </div>
+
+              <div class="transport-option">
+                <div class="transport-icon">
+                  <i class="fas fa-car"></i>
+                </div>
+                <div class="transport-info">
+                  <strong>На автомобиле</strong>
+                  <p>Бесплатная парковка у входа</p>
+                </div>
+              </div>
+            </div>
+
+            <div class="map-actions">
+              <!-- Основная кнопка — как была -->
+              <a href="https://yandex.ru/maps/org/shkola_boksa_abdully_ramazanova/3987126645/?ll=30.478374%2C60.059055&z=16"
+                class="btn btn--primary" target="_blank" rel="noopener">
+                <i class="fas fa-map-marked-alt"></i>
+                Открыть в Яндекс.Картах
+              </a>
+
+              <div style="display: flex; gap: 1rem; margin-top: 1rem;">
+                <a href="yandexmaps://build_route/from=here/to=60.059055,30.478374" class="btn btn--outline btn--small"
+                  style="flex: 1; min-width: 150px;" target="_blank" rel="noopener">
+                  <i class="fab fa-yandex"></i>
+                  Проложить маршрут
+                </a>
+
+                <a href="https://www.google.com/maps/dir/?api=1&destination=60.059055,30.478374"
+                  class="btn btn--outline btn--small" style="flex: 1; min-width: 150px;" target="_blank" rel="noopener">
+                  <i class="fab fa-google"></i>
+                  Проложить маршрут
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Футер -->
+  <footer class="footer">
+    <div class="container">
+      <!-- Основная часть футера -->
+      <div class="footer__main">
+        <!-- Лого и описание -->
+        <div class="footer__brand">
+          <div class="footer__logo">
+            <i class="fas fa-fist-raised footer__logo-icon"></i>
+            <div class="footer__logo-text">
+              <span class="footer__logo-title">Школа Бокса</span>
+              <span class="footer__logo-subtitle">Абдулла Рамазанов</span>
+            </div>
+          </div>
+          <p class="footer__description">
+            Профессиональные тренировки по боксу в Новом Девяткино.
+            Развиваем чемпионов с 2018 года.
+          </p>
+          <div class="footer__social">
+            <a href="https://wa.me/79671789898" class="footer__social-link" target="_blank" rel="noopener">
+              <i class="fab fa-whatsapp"></i>
+            </a>
+            <a href="https://t.me/scboxingnov" class="footer__social-link" target="_blank" rel="noopener">
+              <i class="fab fa-telegram"></i>
+            </a>
+            <a href="https://vk.com/scboxing" class="footer__social-link" target="_blank" rel="noopener">
+              <i class="fab fa-vk"></i>
+            </a>
+          </div>
+        </div>
+
+        <!-- Навигация -->
+        <div class="footer__nav">
+          <h3>Навигация</h3>
+          <ul class="footer__menu">
+            <li><a href="#about">О школе</a></li>
+            <li><a href="#training">Тренировки</a></li>
+            <li><a href="#gallery">Галерея</a></li>
+            <li><a href="#reviews">Отзывы</a></li>
+            <li><a href="#contact">Контакты</a></li>
+          </ul>
+        </div>
+
+        <!-- Контакты -->
+        <div class="footer__contacts">
+          <h3>Контакты</h3>
+          <div class="footer__contact-item">
+            <i class="fas fa-phone"></i>
+            <a href="tel:+79671789898">+7 (967) 178-98-98</a>
+          </div>
+          <div class="footer__contact-item">
+            <i class="fas fa-map-marker-alt"></i>
+            <span>Новое Девяткино, ул. Славы, д. 1</span>
+          </div>
+          <div class="footer__contact-item">
+            <i class="fas fa-clock"></i>
+            <span>Пн-Пт: 08:00-22:00<br>Сб-Вс: 09:00-20:00</span>
+          </div>
+        </div>
+
+        <!-- Быстрая запись -->
+        <div class="footer__cta">
+          <h3>Первая тренировка</h3>
+          <p>Бесплатно для новых учеников</p>
+          <a href="https://wa.me/79671789898?text=Хочу записаться на пробную тренировку"
+            class="btn btn--primary btn--small" target="_blank" rel="noopener">
+            <i class="fab fa-whatsapp"></i>
+            Записаться
+          </a>
+        </div>
+      </div>
+
+      <!-- Нижняя часть футера -->
+      <div class="footer__bottom">
+        <div class="footer__copyright">
+          &copy; 2024 Школа Бокса Абдуллы Рамазанова. Все права защищены.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Скрипты: Vite + модульный Alpine -->
+  <script>
+    window.addEventListener('load', function () {
+      const preloader = document.getElementById('preloader');
+      if (preloader) {
+        preloader.classList.add('preloader--hidden');
+        document.body.classList.remove('body--loading');
+        setTimeout(() => preloader.remove(), 600);
+      }
+    });
+  </script>
+  <script type="module" src="js/main.js"></script>
+</body>   
+
+</html>   

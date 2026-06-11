@@ -1,0 +1,382 @@
+/* ========== СЕКЦИЯ О ШКОЛЕ ========== */
+.about {
+  background: var(--bg-light);
+}
+
+.about__content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: start;
+}
+
+.about__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2.5rem;
+}
+
+.about__description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text);
+}
+
+.about__description p {
+  margin-bottom: 1.5rem;
+}
+
+.about__description p:last-child {
+  margin-bottom: 0;
+}
+
+/* Преимущества */
+.about__features {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.about__feature {
+  display: flex;
+  align-items: flex-start;
+  gap: 1.5rem;
+  padding: 1.5rem;
+  background: var(--white);
+  border-radius: var(--border-radius);
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.about__feature:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+}
+
+.about__feature-icon {
+  font-size: 1.8rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 1rem;
+  border-radius: 12px;
+  background-color: rgba(209, 0, 0, 0.1);
+  flex-shrink: 0;
+}
+
+.about__feature-content h3 {
+  font-size: 1.35rem;
+  font-weight: 500;
+  color: var(--secondary);
+  margin-bottom: 0.5rem;
+}
+
+.about__feature-content p {
+  color: var(--text-light);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.about__actions {
+  margin-top: 1rem;
+}
+
+/* Горизонтальный аккордеон */
+.about__gallery {
+  position: sticky;
+  top: 100px;
+}
+
+.trainers-accordion {
+  display: flex;
+  gap: 1rem;
+  height: 500px;
+}
+
+.trainer-card {
+  position: relative;
+  background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  flex: 0.7;
+  min-width: 80px;
+}
+
+.trainer-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
+}
+
+.trainer-card--active {
+  flex: 3;
+  box-shadow: 0 15px 35px rgba(209, 0, 0, 0.4);
+  border: 3px solid var(--primary);
+}
+
+.trainer-card__content {
+  position: relative;
+  z-index: 2;
+  color: var(--white);
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  padding: 2.5rem;
+}
+
+.trainer-card__info {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+}
+
+.trainer-card--active .trainer-card__info {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.trainer-card__name {
+  font-size: 1.9rem;
+  font-weight: 500;
+  color: var(--white);
+  margin-bottom: 0.8rem;
+  line-height: 1.2;
+}
+
+.trainer-card__title {
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 1.1rem;
+  margin: 0;
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Эффект затемнения неактивных карточек */
+.trainer-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  transition: all 0.4s ease;
+  z-index: 1;
+}
+
+.trainer-card--active::before {
+  background: rgba(0, 0, 0, 0.2);
+}
+
+.trainer-card:hover::before {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+/* ========== АДАПТИВНОСТЬ СЕКЦИИ О ШКОЛЕ ========== */
+@media (max-width: 1200px) {
+  .about__content {
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem;
+  }
+
+  .trainers-accordion {
+    height: 450px;
+  }
+
+  .trainer-card__content {
+    padding: 2rem;
+  }
+
+  .trainer-card__name {
+    font-size: 1.6rem;
+  }
+
+  .trainer-card__title {
+    font-size: 1.1rem;
+  }
+
+  .about__feature {
+    padding: 1.3rem;
+    gap: 1.3rem;
+  }
+
+  .about__feature-icon {
+    font-size: 1.6rem;
+    padding: 0.9rem;
+  }
+
+  .about__feature-content h3 {
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 1024px) {
+  .about__content {
+    grid-template-columns: 1fr;
+    gap: 3.5rem;
+  }
+
+  .about__gallery {
+    position: static;
+    order: -1;
+  }
+
+  .trainers-accordion {
+    height: 500px;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .about__text {
+    gap: 2.2rem;
+  }
+
+  .about__description {
+    font-size: 1.05rem;
+  }
+}
+
+@media (max-width: 968px) {
+  .about__content {
+    grid-template-columns: 1fr;
+    gap: 3rem;
+  }
+
+  .about__gallery {
+    position: static;
+  }
+
+  .trainers-accordion {
+    height: 450px;
+  }
+}
+
+@media (max-width: 768px) {
+  .about__content {
+    gap: 2.5rem;
+  }
+
+  .about__feature {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 1rem;
+    padding: 1.5rem 1rem;
+  }
+
+  .trainers-accordion {
+    flex-direction: column;
+    height: auto;
+    gap: 0.8rem;
+  }
+
+  .trainer-card {
+    position: relative;
+    height: 80px;
+    min-width: 100%;
+    flex: 0 0 auto;
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    overflow: hidden;
+  }
+
+  .trainer-card--active {
+    height: 280px !important;
+    flex: 0 0 auto;
+    transform: none !important;
+  }
+
+  .trainer-card__content {
+    padding: 1.2rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(transparent 0%, rgba(0, 0, 0, 0.8) 100%);
+  }
+
+  .trainer-card__name {
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease 0.2s;
+  }
+
+  .trainer-card__title {
+    font-size: 0.95rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.4s ease 0.3s;
+  }
+
+  /* Показываем информацию только для активной карточки */
+  .trainer-card--active .trainer-card__name,
+  .trainer-card--active .trainer-card__title {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* Базовая информация (только имя) для неактивных карточек */
+  .trainer-card:not(.trainer-card--active) .trainer-card__info::before {
+    content: attr(data-name);
+    position: absolute;
+    bottom: 1rem;
+    left: 1.2rem;
+    color: white;
+    font-size: 1.1rem;
+    font-weight: 600;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
+  }
+
+  .trainer-card:not(.trainer-card--active) .trainer-card__name,
+  .trainer-card:not(.trainer-card--active) .trainer-card__title {
+    opacity: 0;
+  }
+
+  /* Убираем все hover эффекты на мобильных */
+  .trainer-card:hover {
+    transform: none !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .about__feature {
+    padding: 1.2rem 0.8rem;
+  }
+
+  .trainers-accordion {
+    gap: 0.6rem;
+  }
+  
+  .trainer-card {
+    height: 70px;
+  }
+  
+  .trainer-card--active {
+    height: 220px !important;
+  }
+  
+  .trainer-card__content {
+    padding: 1rem;
+  }
+  
+  .trainer-card__name {
+    font-size: 1.1rem;
+  }
+  
+  .trainer-card__title {
+    font-size: 0.85rem;
+  }
+  
+  .trainer-card:not(.trainer-card--active) .trainer-card__info::before {
+    font-size: 1rem;
+    bottom: 0.8rem;
+    left: 1rem;
+  }
+}

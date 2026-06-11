@@ -1,0 +1,133 @@
+/* ========== CSS ПЕРЕМЕННЫЕ ========== */
+:root {
+    --primary: #d10000;
+    --primary-dark: #a00000;
+    --secondary: #1a1a1a;
+    --accent: #e70000;
+    --text: #333;
+    --text-light: #666;
+    --white: #fff;
+    --bg-light: #f8f9fa;
+    --border-radius: 12px;
+    --shadow: 0 4px 12px rgba(0,0,0,0.1);
+    --transition: all 0.3s ease;
+
+    --font-heading: "Rubik Dirt", cursive;
+    --font-body: "Roboto Slab", serif;
+}
+
+/* ========== БАЗОВЫЕ СТИЛИ ========== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body.body--loading {
+    overflow: hidden;
+}
+
+/* Скрыть элементы до инициализации Alpine */
+[x-cloak] {
+    display: none !important;
+}
+
+body {
+    font-family: var(--font-body);
+    line-height: 1.6;
+    color: var(--text);
+    overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-heading);
+    font-weight: 400;
+    line-height: 1.2;
+    letter-spacing: 0.5px;
+}
+
+/* ========== УТИЛИТЫ ========== */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.section {
+    padding: 80px 0;
+}
+
+.section__title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--secondary);
+    position: relative;
+}
+
+.section__title::after {
+    content: "";
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background: var(--primary);
+}
+
+.text--red {
+    color: var(--primary);
+}
+
+.text--accent {
+    color: var(--accent);
+}
+
+/* ========== АНИМАЦИИ ========== */
+@keyframes achievement-float {
+    0%, 100% {
+        transform: translateY(0) rotate(0deg) scale(1);
+    }
+    25% {
+        transform: translateY(-20px) rotate(3deg) scale(1.05);
+    }
+    50% {
+        transform: translateY(-10px) rotate(-2deg) scale(0.95);
+    }
+    75% {
+        transform: translateY(-15px) rotate(2deg) scale(1.02);
+    }
+}
+
+@keyframes ripple-animation {
+    to {
+        transform: scale(4);
+        opacity: 0;
+    }
+}
+
+/* ========== АДАПТИВНОСТЬ ========== */
+@media (max-width: 768px) {
+    .section {
+        padding: 60px 0;
+    }
+    
+    .section__title {
+        font-size: 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .section {
+        padding: 40px 0;
+    }
+    
+    .section__title {
+        font-size: 1.8rem;
+    }
+}

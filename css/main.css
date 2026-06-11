@@ -1,0 +1,39 @@
+/* ========== ГЛАВНЫЙ ФАЙЛ CSS ========== */
+/* Импорты */
+@import url("base.css");
+@import url("components.css");
+
+/* Импорты секций */
+@import url("sections/header.css");
+@import url("sections/hero.css");
+@import url("sections/about.css");
+@import url("sections/training.css");
+@import url("sections/gallery.css");
+@import url("sections/reviews.css");
+@import url("sections/contact.css");
+@import url("sections/footer.css");
+
+/* Контейнер для iframe — чтобы карта была адаптивной */
+.map-iframe-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+}
+
+.map-iframe-container iframe {
+  border: none;
+  border-radius: 16px;
+  width: 100%;
+  height: 100%;
+}
+
+/* Адаптация под мобильные */
+@media (max-width: 768px) {
+  .map-iframe-container {
+    height: 100%;
+    border-radius: 12px;
+  }
+}

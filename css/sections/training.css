@@ -1,0 +1,194 @@
+/* ========== СЕКЦИЯ ТРЕНИРОВКИ ========== */
+.training {
+  background: var(--bg-light);
+}
+
+.training-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 3rem;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.training-tab {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.2rem 2rem;
+  background: var(--white);
+  border: 2px solid transparent;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: var(--transition);
+  font-weight: 600;
+  color: var(--text);
+  box-shadow: var(--shadow);
+  border: none;
+  font-family: inherit;
+}
+
+.training-tab:hover {
+  transform: translateY(-3px);
+  border-color: var(--primary);
+}
+
+.training-tab--active {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(209, 0, 0, 0.3);
+}
+
+.training-tab i {
+  font-size: 1.2rem;
+}
+
+.pricing-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 2rem;
+}
+
+.pricing-card {
+  background: var(--white);
+  padding: 2.5rem 2rem;
+  border-radius: var(--border-radius);
+  text-align: center;
+  box-shadow: var(--shadow);
+  border: 2px solid transparent;
+  transition: var(--transition);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.pricing-card:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: 0 15px 35px rgba(209, 0, 0, 0.15);
+}
+
+.pricing-card--popular {
+  border-color: var(--primary);
+  transform: scale(1.05);
+}
+
+.pricing-card--popular:hover {
+  transform: scale(1.05) translateY(-5px);
+}
+
+.pricing-card__badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--white);
+  padding: 0.5rem 1.5rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  z-index: 2;
+}
+
+.pricing-card__header {
+  margin-bottom: 2rem;
+}
+
+.pricing-card__header h3 {
+  font-size: 1.4rem;
+  color: var(--secondary);
+  margin-bottom: 1rem;
+}
+
+.pricing-card__price {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+  line-height: 1;
+}
+
+.pricing-card__per-class {
+  color: var(--text-light);
+  font-size: 0.9rem;
+}
+
+.pricing-card__features {
+  list-style: none;
+  margin: 2rem 0;
+  text-align: left;
+  flex-grow: 1;
+}
+
+.pricing-card__features li {
+  display: flex;
+  align-items: center;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+  padding: 0.5rem 0;
+  color: var(--text);
+}
+
+.pricing-card__features i {
+  color: var(--primary);
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+/* Кнопка внутри карточки */
+.pricing-card .btn {
+  margin-top: auto;
+  width: 100%;
+  justify-content: center;
+}
+
+/* CTA под таблицей тарифов */
+.training__schedule-cta {
+  margin-top: 3rem;
+  text-align: center;
+}
+
+.training__schedule-cta .btn {
+  min-width: 260px;
+  justify-content: center;
+}
+
+/* Адаптивность */
+@media (max-width: 768px) {
+  .training-tabs {
+    flex-direction: column;
+  }
+  
+  .training-tab {
+    justify-content: center;
+  }
+  
+  .pricing-table {
+    grid-template-columns: 1fr;
+  }
+  
+  .pricing-card--popular {
+    transform: none;
+  }
+  
+  .pricing-card--popular:hover {
+    transform: translateY(-5px);
+  }
+  
+  .pricing-card {
+    padding: 2rem 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .training-tab {
+    padding: 1rem 1.5rem;
+    font-size: 0.9rem;
+  }
+  
+  .pricing-card__price {
+    font-size: 2rem;
+  }
+}
