@@ -5,7 +5,7 @@ export default defineConfig({
   base: '/boxclub/',
   root: '.',
   build: {
-    outDir: 'dist',
+    outDir: 'docs',
     assetsDir: 'assets',
     rollupOptions: {
       input: {
