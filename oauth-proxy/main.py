@@ -38,6 +38,8 @@ def handler(event, context):
         return handle_admin_login(params)
     elif path.endswith("admin/save"):
         return handle_admin_save(params)
+    elif path.endswith("admin/upload"):
+        return handle_admin_upload(params, event)
     else:
         return respond(400, json.dumps({"path": path, "params": params}))
 
@@ -113,6 +115,58 @@ def handle_admin_save(params):
             results.append({"path": path, "success": False, "error": str(e)})
 
     return respond(200, json.dumps({"success": True, "results": results}))
+
+
+def handle_admin_upload(params, event):
+    password = params.get("password", "")
+    filename = params.get("filename", "")
+    data = params.get("data", "")
+    folder = params.get("folder", "gallery")
+
+    if hashlib.sha256(password.encode()).hexdigest() != ADMIN_PASS_HASH:
+        return respond(401, json.dumps({"error": "Неверный пароль"}))
+    if not filename:
+        return respond(400, json.dumps({"error": "filename required"}))
+    if not data:
+        return respond(400, json.dumps({"error": "data required"}))
+
+    # Remove data URL prefix if present (e.g. "data:image/png;base64,")
+    if "," in data:
+        data = data.split(",")[1]
+
+    filepath = f"public/images/{folder}/{filename}"
+
+    gh_headers = {
+        "Authorization": f"Bearer {GH_PAT}",
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "boxclub-admin",
+    }
+    api = f"https://api.github.com/repos/{GH_OWNER}/{GH_REPO}"
+
+    try:
+        url = f"{api}/contents/{filepath}"
+        req = urllib.request.Request(url, headers=gh_headers)
+        try:
+            resp = urllib.request.urlopen(req)
+            existing = json.loads(resp.read())
+            sha = existing["sha"]
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                sha = None
+            else:
+                raise
+
+        body = json.dumps({
+            "message": f"Upload {filename} via admin",
+            "content": data,
+            "sha": sha,
+            "branch": GH_BRANCH,
+        })
+        req = urllib.request.Request(url, data=body.encode(), headers=gh_headers, method="PUT")
+        urllib.request.urlopen(req)
+        return respond(200, json.dumps({"success": True, "url": f"/images/{folder}/{filename}"}))
+    except Exception as e:
+        return respond(500, json.dumps({"error": str(e)}))
 
 
 def respond(code, body, headers=None):
