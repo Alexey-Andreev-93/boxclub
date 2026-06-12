@@ -269,7 +269,7 @@
           <div class="trainers-accordion">
             <!-- Тренер 1 -->
             <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 1 }" @click="toggleTrainer(1)"
-              @mouseenter="activateTrainer(1)" style="background-image: url('images/trainer/trainer-1.jpg')">
+              @mouseenter="activateTrainer(1)" style="background-image: url('images/trainer/trainer-1.webp')">
               <div class="trainer-card__content">
                 <div class="trainer-card__info" data-name="Абдулла Рамазанов">
                   <h3 class="trainer-card__name">Абдулла Рамазанов</h3>
@@ -280,7 +280,7 @@
 
             <!-- Тренер 2 -->
             <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 2 }" @click="toggleTrainer(2)"
-              @mouseenter="activateTrainer(2)" style="background-image: url('images/trainer/trainer-2.jpg')">
+              @mouseenter="activateTrainer(2)" style="background-image: url('images/trainer/trainer-2.webp')">
               <div class="trainer-card__content">
                 <div class="trainer-card__info" data-name="Мария Иванова">
                   <h3 class="trainer-card__name">Мария Иванова</h3>
@@ -291,7 +291,7 @@
 
             <!-- Тренер 3 -->
             <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 3 }" @click="toggleTrainer(3)"
-              @mouseenter="activateTrainer(3)" style="background-image: url('images/trainer/trainer-3.jpg')">
+              @mouseenter="activateTrainer(3)" style="background-image: url('images/trainer/trainer-3.webp')">
               <div class="trainer-card__content">
                 <div class="trainer-card__info" data-name="Дмитрий Петров">
                   <h3 class="trainer-card__name">Дмитрий Петров</h3>
@@ -509,7 +509,7 @@
             @click="openLightbox(item)" @mouseenter="startFloat($el)" @mouseleave="stopFloat($el)">
 
             <div class="gallery__image-container">
-              <img :src="item.image" :alt="item.title" class="gallery__image" />
+              <img :src="item.image" :alt="item.title" loading="lazy" class="gallery__image" />
 
               <!-- Эффект наведения -->
               <div class="gallery__overlay">
@@ -607,7 +607,7 @@
               <p class="review-card__text" x-text="review.text"></p>
             </div>
             <div class="review-card__author">
-              <img :src="review.avatar" :alt="review.name" class="review-card__avatar">
+              <img :src="review.avatar" :alt="review.name" loading="lazy" class="review-card__avatar">
               <div class="review-card__info">
                 <h4 x-text="review.name"></h4>
                 <p x-text="review.experience"></p>
