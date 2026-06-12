@@ -30,11 +30,7 @@ def handler(event, context):
         except (json.JSONDecodeError, TypeError):
             pass
 
-    if path.endswith("auth"):
-        return handle_auth(params)
-    elif path.endswith("callback"):
-        return handle_callback(params)
-    elif path.endswith("admin/login"):
+    if path.endswith("admin/login"):
         return handle_admin_login(params)
     elif path.endswith("admin/save"):
         return handle_admin_save(params)
@@ -42,19 +38,6 @@ def handler(event, context):
         return handle_admin_upload(params, event)
     else:
         return respond(400, json.dumps({"path": path, "params": params}))
-
-
-def handle_auth(params):
-    site_id = params.get("site_id", "")
-    if not GH_PAT:
-        return respond(500, "GH_PAT not configured")
-    cms_url = ("https://" + site_id if site_id else "https://boxclub.website.yandexcloud.net")
-    cms_url = cms_url.rstrip("/") + "/admin/auth-callback.html"
-    return respond(302, "", headers={"Location": f"{cms_url}#access_token={GH_PAT}&provider=github"})
-
-
-def handle_callback(params):
-    return respond(200, "OK")
 
 
 def handle_admin_login(params):
