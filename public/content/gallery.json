@@ -87,6 +87,16 @@
       "date": "30.01.2024",
       "category": "Тренировочный процесс",
       "featured": false
+    },
+    {
+      "id": 1781292744822,
+      "image": "/images/gallery/1781292751210-_________________2026-06-08_22-07-48.png",
+      "title": "туц",
+      "description": "туц",
+      "type": "training",
+      "badge": "туц",
+      "date": "",
+      "featured": false
     }
   ]
 }
