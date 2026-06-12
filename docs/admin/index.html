@@ -22,7 +22,7 @@
     .sidebar a { display: block; padding: 0.7rem 1.2rem; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; cursor: pointer; }
     .sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.08); color: #fff; }
     .sidebar a i { width: 20px; margin-right: 8px; }
-    .main { margin-left: 220px; padding: 2rem; }
+    .main { margin-left: 220px; padding: 2rem; padding-bottom: 5rem; }
     .section { display: none; }
     .section.active { display: block; }
     .section-header { margin-bottom: 1.5rem; }
@@ -48,7 +48,6 @@
     .save-status.error { color: #e74c3c; }
     .hidden { display: none !important; }
     .loading { text-align: center; padding: 3rem; color: #888; }
-    .field .image-preview { max-width: 120px; max-height: 80px; border-radius: 4px; margin-top: 0.3rem; }
   </style>
 </head>
 <body>
@@ -84,7 +83,7 @@
 
 <script>
 const API = 'https://d5dno7rs14sms0o16i5m.nkhmighe.apigw.yandexcloud.net';
-let content = {};
+var content = {};
 
 function login() {
   var pwd = document.getElementById('passwordInput').value;
@@ -137,26 +136,26 @@ function renderAll() {
   renderAchievements();
 }
 
-function clear(id) { document.getElementById(id).innerHTML = ''; }
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'&#10;'); }
 
 function renderTraining() {
   var el = document.getElementById('section-training');
   if (!content.training || !content.training.categories) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
-  var html = '<div class="section-header"><h2>Стоимость тренировок</h2></div>';
+  var html = '<div class="section-header"><h2>Стоимость тренировок</h2><p style="color:#888;font-size:0.85rem;">Исправь и нажми «Сохранить всё» внизу</p></div>';
   content.training.categories.forEach(function(cat, ci) {
-    html += '<div class="card"><h3>' + cat.title + '</h3>';
-    html += '<div class="field"><label>Название</label><input value="' + esc(cat.title) + '" onchange="setTraining(' + ci + ', \'title\', this.value)"></div>';
-    html += '<div class="field"><label>Иконка (FontAwesome)</label><input value="' + esc(cat.icon) + '" onchange="setTraining(' + ci + ', \'icon\', this.value)"></div>';
+    html += '<div class="card"><h3>' + esc(cat.title) + '</h3>';
+    html += '<div class="field"><label>Название</label><input value="' + esc(cat.title) + '" onchange="setTraining(' + ci + ',\'title\',this.value)"></div>';
+    html += '<div class="field"><label>Иконка (FontAwesome)</label><input value="' + esc(cat.icon) + '" onchange="setTraining(' + ci + ',\'icon\',this.value)"></div>';
     cat.plans.forEach(function(plan, pi) {
       html += '<div class="array-item">';
-      html += '<button class="remove-btn" onclick="removePlan(' + ci + ', ' + pi + ')"><i class="fas fa-times"></i></button>';
-      html += '<div class="field"><label>Название тарифа</label><input value="' + esc(plan.title) + '" onchange="setPlan(' + ci + ', ' + pi + ', \'title\', this.value)"></div>';
-      html += '<div class="field"><label>Цена</label><input value="' + esc(plan.price) + '" onchange="setPlan(' + ci + ', ' + pi + ', \'price\', this.value)"></div>';
-      html += '<div class="field"><label>Цена за занятие</label><input value="' + esc(plan.perClass) + '" onchange="setPlan(' + ci + ', ' + pi + ', \'perClass\', this.value)"></div>';
-      html += '<div class="field"><label>Текст кнопки</label><input value="' + esc(plan.buttonText || '') + '" onchange="setPlan(' + ci + ', ' + pi + ', \'buttonText\', this.value)"></div>';
-      html += '<div class="field"><label>Текст бейджа</label><input value="' + esc(plan.badgeText || '') + '" onchange="setPlan(' + ci + ', ' + pi + ', \'badgeText\', this.value)"></div>';
-      html += '<div class="field"><div class="checkbox-wrap"><input type="checkbox" ' + (plan.popular ? 'checked' : '') + ' onchange="setPlan(' + ci + ', ' + pi + ', \'popular\', this.checked)"><label>Популярный?</label></div></div>';
-      html += '<div class="field"><label>Преимущества (каждое с новой строки)</label><textarea rows="3" onchange="setPlanFeatures(' + ci + ', ' + pi + ', this.value)">' + esc((plan.features || []).join('\n')) + '</textarea></div>';
+      html += '<button class="remove-btn" onclick="removePlan(' + ci + ',' + pi + ')"><i class="fas fa-times"></i></button>';
+      html += '<div class="field"><label>Название тарифа</label><input value="' + esc(plan.title) + '" onchange="setPlan(' + ci + ',' + pi + ',\'title\',this.value)"></div>';
+      html += '<div class="field"><label>Цена</label><input value="' + esc(plan.price) + '" onchange="setPlan(' + ci + ',' + pi + ',\'price\',this.value)"></div>';
+      html += '<div class="field"><label>Цена за занятие</label><input value="' + esc(plan.perClass) + '" onchange="setPlan(' + ci + ',' + pi + ',\'perClass\',this.value)"></div>';
+      html += '<div class="field"><label>Текст кнопки</label><input value="' + esc(plan.buttonText || '') + '" onchange="setPlan(' + ci + ',' + pi + ',\'buttonText\',this.value)"></div>';
+      html += '<div class="field"><label>Текст бейджа</label><input value="' + esc(plan.badgeText || '') + '" onchange="setPlan(' + ci + ',' + pi + ',\'badgeText\',this.value)"></div>';
+      html += '<div class="field"><div class="checkbox-wrap"><input type="checkbox" ' + (plan.popular ? 'checked' : '') + ' onchange="setPlan(' + ci + ',' + pi + ',\'popular\',this.checked)"><label>Популярный?</label></div></div>';
+      html += '<div class="field"><label>Преимущества (каждое с новой строки)</label><textarea rows="3" onchange="setPlanFeatures(' + ci + ',' + pi + ',this.value)">' + esc((plan.features || []).join('\n')) + '</textarea></div>';
       html += '</div>';
     });
     html += '<button class="add-btn" onclick="addPlan(' + ci + ')"><i class="fas fa-plus"></i> Добавить тариф</button>';
@@ -168,16 +167,16 @@ function renderTraining() {
 function renderGallery() {
   var el = document.getElementById('section-gallery');
   if (!content.gallery || !content.gallery.items) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
-  var html = '<div class="section-header"><h2>Галерея</h2></div>';
+  var html = '<div class="section-header"><h2>Галерея</h2><p style="color:#888;font-size:0.85rem;">Исправь и нажми «Сохранить всё» внизу</p></div>';
   content.gallery.items.forEach(function(item, i) {
     html += '<div class="card array-item">';
     html += '<button class="remove-btn" onclick="removeGallery(' + i + ')"><i class="fas fa-times"></i></button>';
-    html += '<div class="field"><label>Заголовок</label><input value="' + esc(item.title) + '" onchange="setGallery(' + i + ', \'title\', this.value)"></div>';
-    html += '<div class="field"><label>Описание</label><textarea rows="2" onchange="setGallery(' + i + ', \'description\', this.value)">' + esc(item.description) + '</textarea></div>';
-    html += '<div class="field"><label>Тип</label><select onchange="setGallery(' + i + ', \'type\', this.value)"><option value="training" ' + (item.type === 'training' ? 'selected' : '') + '>Тренировка</option><option value="competitions" ' + (item.type === 'competitions' ? 'selected' : '') + '>Соревнования</option><option value="team" ' + (item.type === 'team' ? 'selected' : '') + '>Команда</option></select></div>';
-    html += '<div class="field"><label>Бейдж</label><input value="' + esc(item.badge) + '" onchange="setGallery(' + i + ', \'badge\', this.value)"></div>';
-    html += '<div class="field"><label>Дата</label><input value="' + esc(item.date) + '" onchange="setGallery(' + i + ', \'date\', this.value)"></div>';
-    html += '<div class="field"><div class="checkbox-wrap"><input type="checkbox" ' + (item.featured ? 'checked' : '') + ' onchange="setGallery(' + i + ', \'featured\', this.checked)"><label>Избранное?</label></div></div>';
+    html += '<div class="field"><label>Заголовок</label><input value="' + esc(item.title) + '" onchange="setGallery(' + i + ',\'title\',this.value)"></div>';
+    html += '<div class="field"><label>Описание</label><textarea rows="2" onchange="setGallery(' + i + ',\'description\',this.value)">' + esc(item.description) + '</textarea></div>';
+    html += '<div class="field"><label>Тип</label><select onchange="setGallery(' + i + ',\'type\',this.value)"><option value="training" ' + (item.type==='training'?'selected':'') + '>Тренировка</option><option value="competitions" ' + (item.type==='competitions'?'selected':'') + '>Соревнования</option><option value="team" ' + (item.type==='team'?'selected':'') + '>Команда</option></select></div>';
+    html += '<div class="field"><label>Бейдж</label><input value="' + esc(item.badge) + '" onchange="setGallery(' + i + ',\'badge\',this.value)"></div>';
+    html += '<div class="field"><label>Дата</label><input value="' + esc(item.date) + '" onchange="setGallery(' + i + ',\'date\',this.value)"></div>';
+    html += '<div class="field"><div class="checkbox-wrap"><input type="checkbox" ' + (item.featured?'checked':'') + ' onchange="setGallery(' + i + ',\'featured\',this.checked)"><label>Избранное?</label></div></div>';
     html += '</div>';
   });
   html += '<button class="add-btn" onclick="addGallery()"><i class="fas fa-plus"></i> Добавить фото</button>';
@@ -187,14 +186,14 @@ function renderGallery() {
 function renderReviews() {
   var el = document.getElementById('section-reviews');
   if (!content.reviews || !content.reviews.items) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
-  var html = '<div class="section-header"><h2>Отзывы</h2></div>';
+  var html = '<div class="section-header"><h2>Отзывы</h2><p style="color:#888;font-size:0.85rem;">Исправь и нажми «Сохранить всё» внизу</p></div>';
   content.reviews.items.forEach(function(item, i) {
     html += '<div class="card array-item">';
     html += '<button class="remove-btn" onclick="removeReview(' + i + ')"><i class="fas fa-times"></i></button>';
-    html += '<div class="field"><label>Имя</label><input value="' + esc(item.name) + '" onchange="setReview(' + i + ', \'name\', this.value)"></div>';
-    html += '<div class="field"><label>Опыт</label><input value="' + esc(item.experience) + '" onchange="setReview(' + i + ', \'experience\', this.value)"></div>';
-    html += '<div class="field"><label>Текст отзыва</label><textarea rows="3" onchange="setReview(' + i + ', \'text\', this.value)">' + esc(item.text) + '</textarea></div>';
-    html += '<div class="field"><label>Рейтинг (1-5)</label><input type="number" min="1" max="5" value="' + item.rating + '" onchange="setReview(' + i + ', \'rating\', parseInt(this.value) || 5)"></div>';
+    html += '<div class="field"><label>Имя</label><input value="' + esc(item.name) + '" onchange="setReview(' + i + ',\'name\',this.value)"></div>';
+    html += '<div class="field"><label>Опыт</label><input value="' + esc(item.experience) + '" onchange="setReview(' + i + ',\'experience\',this.value)"></div>';
+    html += '<div class="field"><label>Текст отзыва</label><textarea rows="3" onchange="setReview(' + i + ',\'text\',this.value)">' + esc(item.text) + '</textarea></div>';
+    html += '<div class="field"><label>Рейтинг (1-5)</label><input type="number" min="1" max="5" value="' + item.rating + '" onchange="setReview(' + i + ',\'rating\',parseInt(this.value)||5)"></div>';
     html += '</div>';
   });
   html += '<button class="add-btn" onclick="addReview()"><i class="fas fa-plus"></i> Добавить отзыв</button>';
@@ -204,46 +203,38 @@ function renderReviews() {
 function renderAchievements() {
   var el = document.getElementById('section-achievements');
   if (!content.achievements || !content.achievements.items) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
-  var html = '<div class="section-header"><h2>Достижения</h2></div>';
+  var html = '<div class="section-header"><h2>Достижения</h2><p style="color:#888;font-size:0.85rem;">Исправь и нажми «Сохранить всё» внизу</p></div>';
   content.achievements.items.forEach(function(item, i) {
     html += '<div class="card array-item">';
     html += '<button class="remove-btn" onclick="removeAchievement(' + i + ')"><i class="fas fa-times"></i></button>';
-    html += '<div class="field"><label>Название</label><input value="' + esc(item.title) + '" onchange="setAchievement(' + i + ', \'title\', this.value)"></div>';
-    html += '<div class="field"><label>CSS-класс</label><input value="' + esc(item.positionClass) + '" onchange="setAchievement(' + i + ', \'positionClass\', this.value)"></div>';
+    html += '<div class="field"><label>Название</label><input value="' + esc(item.title) + '" onchange="setAchievement(' + i + ',\'title\',this.value)"></div>';
+    html += '<div class="field"><label>CSS-класс</label><input value="' + esc(item.positionClass) + '" onchange="setAchievement(' + i + ',\'positionClass\',this.value)"></div>';
     html += '</div>';
   });
   html += '<button class="add-btn" onclick="addAchievement()"><i class="fas fa-plus"></i> Добавить достижение</button>';
   el.innerHTML = html;
 }
 
-function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'&#10;'); }
+function setTraining(ci,k,v) { content.training.categories[ci][k]=v; }
+function setPlan(ci,pi,k,v) { content.training.categories[ci].plans[pi][k]=v; }
+function setPlanFeatures(ci,pi,v) { content.training.categories[ci].plans[pi].features=v.split('\n').filter(Boolean); }
+function setGallery(i,k,v) { content.gallery.items[i][k]=v; }
+function setReview(i,k,v) { content.reviews.items[i][k]=v; }
+function setAchievement(i,k,v) { content.achievements.items[i][k]=v; }
 
-function setTraining(ci, key, val) { content.training.categories[ci][key] = val; }
-function setPlan(ci, pi, key, val) { content.training.categories[ci].plans[pi][key] = val; }
-function setPlanFeatures(ci, pi, val) { content.training.categories[ci].plans[pi].features = val.split('\n').filter(Boolean); }
-function setGallery(i, key, val) { content.gallery.items[i][key] = val; }
-function setReview(i, key, val) { content.reviews.items[i][key] = val; }
-function setAchievement(i, key, val) { content.achievements.items[i][key] = val; }
-
-function addPlan(ci) {
-  content.training.categories[ci].plans.push({id: 'new-' + Date.now(), title: '', price: '', perClass: '', popular: false, features: []});
-  renderTraining();
-}
-function removePlan(ci, pi) {
-  content.training.categories[ci].plans.splice(pi, 1);
-  renderTraining();
-}
-function addGallery() { content.gallery.items.push({id: Date.now(), image: '', title: '', description: '', type: 'training', badge: '', date: '', featured: false}); renderGallery(); }
-function removeGallery(i) { content.gallery.items.splice(i, 1); renderGallery(); }
-function addReview() { content.reviews.items.push({id: Date.now(), name: '', experience: '', text: '', rating: 5}); renderReviews(); }
-function removeReview(i) { content.reviews.items.splice(i, 1); renderReviews(); }
-function addAchievement() { content.achievements.items.push({image: '', title: '', positionClass: ''}); renderAchievements(); }
-function removeAchievement(i) { content.achievements.items.splice(i, 1); renderAchievements(); }
+function addPlan(ci) { content.training.categories[ci].plans.push({id:'new-'+Date.now(),title:'',price:'',perClass:'',popular:false,features:[]}); renderTraining(); }
+function removePlan(ci,pi) { content.training.categories[ci].plans.splice(pi,1); renderTraining(); }
+function addGallery() { content.gallery.items.push({id:Date.now(),image:'',title:'',description:'',type:'training',badge:'',date:'',featured:false}); renderGallery(); }
+function removeGallery(i) { content.gallery.items.splice(i,1); renderGallery(); }
+function addReview() { content.reviews.items.push({id:Date.now(),name:'',experience:'',text:'',rating:5}); renderReviews(); }
+function removeReview(i) { content.reviews.items.splice(i,1); renderReviews(); }
+function addAchievement() { content.achievements.items.push({image:'',title:'',positionClass:''}); renderAchievements(); }
+function removeAchievement(i) { content.achievements.items.splice(i,1); renderAchievements(); }
 
 function switchTab(name) {
-  document.querySelectorAll('.section, .sidebar a').forEach(function(el) { el.classList.remove('active'); });
-  document.getElementById('section-' + name).classList.add('active');
-  document.querySelector('.sidebar a[onclick*="' + name + '"]').classList.add('active');
+  document.querySelectorAll('.section, .sidebar a').forEach(function(el){el.classList.remove('active');});
+  document.getElementById('section-'+name).classList.add('active');
+  document.querySelector('.sidebar a[onclick*="'+name+'"]').classList.add('active');
 }
 
 function saveAll() {
@@ -257,10 +248,10 @@ function saveAll() {
   if (!pwd) { status.className = 'save-status error'; status.textContent = 'Сессия истекла, перезагрузите страницу'; btn.disabled = false; return; }
 
   var files = [
-    {path: 'public/content/training.json', content: JSON.stringify(content.training, null, 2)},
-    {path: 'public/content/gallery.json', content: JSON.stringify(content.gallery, null, 2)},
-    {path: 'public/content/reviews.json', content: JSON.stringify(content.reviews, null, 2)},
-    {path: 'public/content/achievements.json', content: JSON.stringify(content.achievements, null, 2)},
+    {path:'public/content/training.json', content: JSON.stringify(content.training, null, 2)},
+    {path:'public/content/gallery.json', content: JSON.stringify(content.gallery, null, 2)},
+    {path:'public/content/reviews.json', content: JSON.stringify(content.reviews, null, 2)},
+    {path:'public/content/achievements.json', content: JSON.stringify(content.achievements, null, 2)},
   ];
 
   fetch(API + '/admin/save', {
@@ -272,7 +263,7 @@ function saveAll() {
   .then(function(data) {
     if (data.success) {
       status.className = 'save-status success';
-      status.textContent = 'Сохранено! GitHub Actions деплоит...';
+      status.textContent = '✓ Сохранено! GitHub Actions деплоит (~1 мин)';
     } else {
       status.className = 'save-status error';
       status.textContent = 'Ошибка: ' + (data.error || 'неизвестная');
