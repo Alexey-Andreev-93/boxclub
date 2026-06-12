@@ -1,0 +1,15 @@
+{
+  "items": [
+    {
+      "badge": "new",
+      "featured": true,
+      "date": "12.12.1912",
+      "title": "новое фото",
+      "type": "competitions",
+      "id": 13,
+      "image": "/boxclub/images/снимок-экрана-от-2026-06-11-18-24-13.png",
+      "description": "новое фото добавленное с помощью CMS\n",
+      "category": "new"
+    }
+  ]
+}
