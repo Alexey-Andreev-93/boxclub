@@ -1,6 +1,6 @@
 # boxclub
 
-Landing page for a boxing school with Decap CMS. Deployed on Netlify.
+Landing page for a boxing school with Decap CMS. Deployed on Yandex Cloud.
 
 ## Commands
 
@@ -25,8 +25,8 @@ css/sections/           — one CSS file per section
 public/admin/           — Decap CMS (index.html + config.yml)
 public/content/         — JSON files edited by CMS (training, gallery, reviews, achievements)
 public/images/          — images uploaded via CMS
-netlify.toml            — Netlify build config
-docs/                   — build output (not tracked, built by Netlify)
+docs/                   — build output
+.github/workflows/      — GitHub Actions CI/CD
 ```
 
 ## CMS (local dev)
@@ -39,12 +39,43 @@ CMS at `http://localhost:3000/admin/`. Data loaded from `public/content/*.json`.
 
 ## CMS (production)
 
-Production CMS at `https://boxclub.netlify.app/admin/`. Uses Netlify Identity + Git Gateway. Changes are committed to GitHub and auto-deployed by Netlify.
+Production CMS at `https://boxclub.website.yandexcloud.net/admin/`. Uses GitHub backend with Yandex Cloud OAuth proxy. Changes are committed to GitHub and auto-deployed to Yandex Object Storage via GitHub Actions.
+
+## Deploy
+
+On push to `main`:
+1. GitHub Actions runs `npm run build`
+2. Uploads `docs/` to Yandex Object Storage bucket `boxclub`
+3. Site live at `https://boxclub.website.yandexcloud.net/`
+
+### Manual deploy
+
+```bash
+npm run build
+python3 .github/scripts/deploy.py   # requires YC_KEY_ID + YC_SECRET env vars
+```
+
+### GitHub Secrets needed
+
+| Secret | Value |
+|---|---|
+| `YC_KEY_ID` | Static access key ID for Object Storage |
+| `YC_SECRET` | Static access key secret |
+
+### Yandex Cloud resources
+
+| Resource | ID / URL |
+|---|---|
+| Object Storage bucket | `boxclub` |
+| Website URL | `https://boxclub.website.yandexcloud.net/` |
+| OAuth function | `boxclub-oauth` |
+| OAuth API Gateway | `https://d5dno7rs14sms0o16i5m.nkhmighe.apigw.yandexcloud.net` |
+| Service account | `boxclub-deploy` (storage.admin on default folder) |
 
 ## Build quirks
 
 - `vite.config.js` sets `base: '/'` (site at root)
-- `build.outDir` is `docs/`; built by Netlify on each push
+- `build.outDir` is `docs/`
 - The `@` import alias resolves to `js/`
 - Alpine components use `init()`/`destroy()` lifecycle hooks; register via `Alpine.data(name, factory)` in `main.js`
 - CSS uses BEM naming: `.block__element--modifier`; CSS custom properties in `:root`
@@ -53,4 +84,4 @@ Production CMS at `https://boxclub.netlify.app/admin/`. Uses Netlify Identity + 
 
 ## Content
 
-Edit content via Decap CMS at `/admin/` or directly in `public/content/*.json`. Images go in `public/images/`. In production, CMS saves to GitHub and Netlify auto-deploys.
+Edit content via Decap CMS at `/admin/` or directly in `public/content/*.json`. Images go in `public/images/`. In production, CMS saves to GitHub and GitHub Actions auto-deploys.

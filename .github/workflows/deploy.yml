@@ -1,0 +1,29 @@
+name: Deploy to Yandex Cloud
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - run: pip install boto3
+
+      - name: Upload to Yandex Object Storage
+        env:
+          YC_KEY_ID: ${{ secrets.YC_KEY_ID }}
+          YC_SECRET: ${{ secrets.YC_SECRET }}
+        run: python3 .github/scripts/deploy.py
