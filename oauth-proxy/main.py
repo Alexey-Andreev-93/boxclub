@@ -10,9 +10,11 @@ BASE_URL = os.environ.get("BASE_URL", "")
 
 def handler(event, context):
     path = event.get("path", event.get("requestContext", {}).get("path", ""))
-    params = event.get("queryStringParameters") or {}
-    multi = event.get("multiValueQueryStringParameters") or {}
-    for k, v in multi.items():
+    params = {}
+    qp = event.get("queryStringParameters") or {}
+    mqp = event.get("multiValueQueryStringParameters") or {}
+    params.update(qp)
+    for k, v in mqp.items():
         if k not in params and v:
             params[k] = v[0] if isinstance(v, list) else v
 
@@ -20,8 +22,15 @@ def handler(event, context):
         return handle_auth(params)
     elif path.endswith("callback"):
         return handle_callback(params)
+    elif path.endswith("debug"):
+        return respond(200, json.dumps({
+            "client_id": CLIENT_ID[:10] + "..." if CLIENT_ID else "NOT SET",
+            "base_url": BASE_URL,
+            "has_secret": bool(CLIENT_SECRET),
+            "path": path,
+        }))
     else:
-        return respond(400, "Not found: use /auth or /callback")
+        return respond(400, json.dumps({"path": path, "params": params}))
 
 
 def handle_auth(params):
@@ -31,31 +40,40 @@ def handle_auth(params):
     site_id = params.get("site_id", "")
     state = params.get("state", "")
 
-    # Use site_id as fallback for redirect_uri
-    final_redirect = redirect_uri or (site_id or "")
-
-    if not final_redirect:
-        return respond(400, "redirect_uri required. Params: " + json.dumps(params))
+    if not CLIENT_ID:
+        return respond(500, "CLIENT_ID not configured")
     if not BASE_URL:
         return respond(500, "BASE_URL not configured")
 
-    gh_params = urllib.parse.urlencode({
+    # Determine the final redirect target
+    final_redirect = redirect_uri or ("https://" + site_id if site_id else "")
+
+    # Build GitHub OAuth URL
+    oauth_params = {
         "client_id": CLIENT_ID,
         "redirect_uri": BASE_URL.rstrip("/") + "/callback",
         "scope": scope,
-        "state": state or final_redirect,
-    })
-    gh_url = "https://github.com/login/oauth/authorize?" + gh_params
+        "state": json.dumps({"redirect": final_redirect, "state": state}),
+    }
+    gh_url = "https://github.com/login/oauth/authorize?" + urllib.parse.urlencode(oauth_params)
     return respond(302, "", headers={"Location": gh_url})
 
 
 def handle_callback(params):
     code = params.get("code", "")
-    state = params.get("state", "")
+    state_raw = params.get("state", "{}")
+
+    try:
+        state_data = json.loads(state_raw) if state_raw else {}
+    except json.JSONDecodeError:
+        state_data = {"redirect": ""}
+
+    redirect_to = state_data.get("redirect", "")
 
     if not code:
         return respond(400, "Missing code")
 
+    # Exchange code for access token
     data = urllib.parse.urlencode({
         "client_id": CLIENT_ID,
         "client_secret": CLIENT_SECRET,
@@ -75,22 +93,13 @@ def handle_callback(params):
 
     access_token = token_data.get("access_token", "")
 
-    html = f"""<!DOCTYPE html>
-<html><head><meta charset="utf-8"></head>
-<body><script>
-(function() {{
-    function receiveMessage(message) {{
-        window.opener.postMessage(
-            {{ type: 'authorization', token: '{access_token}', provider: 'github' }},
-            window.location.origin
-        );
-        window.close();
-    }}
-    window.addEventListener('message', receiveMessage, false);
-    receiveMessage({{ data: null }});
-}})();
-</script></body></html>"""
-    return respond(200, html, {"Content-Type": "text/html; charset=utf-8"})
+    if not access_token:
+        return respond(500, "No access_token: " + json.dumps(token_data))
+
+    # Redirect popup to auth-callback page which sends token to parent via postMessage
+    cms_url = redirect_to.rstrip("/") if redirect_to else "https://boxclub.website.yandexcloud.net"
+    cms_url += "/admin/auth-callback.html"
+    return respond(302, "", headers={"Location": f"{cms_url}#access_token={access_token}&provider=github"})
 
 
 def respond(code, body, headers=None):

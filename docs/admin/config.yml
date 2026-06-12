@@ -3,6 +3,7 @@ backend:
   repo: Alexey-Andreev-93/boxclub
   branch: main
   base_url: https://d5dno7rs14sms0o16i5m.nkhmighe.apigw.yandexcloud.net
+  use_pkce: false
   commit_messages:
     create: Создано {{collection}} “{{slug}}”
     update: Обновлено {{collection}} “{{slug}}”
