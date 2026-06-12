@@ -89,10 +89,9 @@ def handle_callback(params):
     if not access_token:
         return respond(500, "No access_token: " + json.dumps(token_data))
 
-    # Redirect popup back to admin page with token in hash
-    # Decap CMS polls popup.location.hash for access_token
+    # Redirect popup to auth-callback page which sends token to parent via postMessage
     cms_url = redirect_to.rstrip("/") if redirect_to else "https://boxclub.website.yandexcloud.net"
-    cms_url += "/admin/"
+    cms_url += "/admin/auth-callback.html"
     return respond(302, "", headers={"Location": f"{cms_url}#access_token={access_token}&provider=github"})
 
 
