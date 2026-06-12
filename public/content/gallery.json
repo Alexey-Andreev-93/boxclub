@@ -87,17 +87,6 @@
       "date": "30.01.2024",
       "category": "Тренировочный процесс",
       "featured": false
-    },
-    {
-      "id": 9,
-      "image": "/images/снимок-экрана-от-2026-06-11-18-24-13.webp",
-      "title": "new",
-      "description": "new image CMS",
-      "type": "competitions",
-      "badge": "new",
-      "date": "12.12.1912",
-      "category": "new",
-      "featured": true
     }
   ]
 }
