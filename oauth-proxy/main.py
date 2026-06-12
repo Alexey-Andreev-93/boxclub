@@ -22,13 +22,6 @@ def handler(event, context):
         return handle_auth(params)
     elif path.endswith("callback"):
         return handle_callback(params)
-    elif path.endswith("debug"):
-        return respond(200, json.dumps({
-            "client_id": CLIENT_ID[:10] + "..." if CLIENT_ID else "NOT SET",
-            "base_url": BASE_URL,
-            "has_secret": bool(CLIENT_SECRET),
-            "path": path,
-        }))
     else:
         return respond(400, json.dumps({"path": path, "params": params}))
 
