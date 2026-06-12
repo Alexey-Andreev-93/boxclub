@@ -1,0 +1,106 @@
+backend:
+  name: git-gateway
+  branch: main
+  commit_messages:
+    create: Создано {{collection}} “{{slug}}”
+    update: Обновлено {{collection}} “{{slug}}”
+    delete: Удалено {{collection}} “{{slug}}”
+    uploadMedia: Загружено “{{path}}”
+    deleteMedia: Удалено “{{path}}”
+
+media_folder: public/images
+public_folder: /images
+
+collections:
+  - name: training
+    label: "Стоимость тренировок"
+    label_singular: "Категория тренировок"
+    description: "Цены и тарифы на тренировки"
+    create: false
+    files:
+      - file: public/content/training.json
+        label: "Тарифы"
+        name: training
+        fields:
+          - label: "Категории"
+            name: categories
+            widget: list
+            fields:
+              - { label: "ID", name: id, widget: string }
+              - { label: "Название", name: title, widget: string }
+              - { label: "Иконка (FontAwesome)", name: icon, widget: string, default: "fas fa-user" }
+              - label: "Тарифы"
+                name: plans
+                widget: list
+                fields:
+                  - { label: "ID", name: id, widget: string }
+                  - { label: "Название", name: title, widget: string }
+                  - { label: "Цена", name: price, widget: string }
+                  - { label: "Цена за занятие", name: perClass, widget: string }
+                  - { label: "Популярный?", name: popular, widget: boolean, default: false }
+                  - { label: "Текст бейджа", name: badgeText, widget: string, required: false }
+                  - { label: "Текст кнопки", name: buttonText, widget: string }
+                  - { label: "Преимущества", name: features, widget: list, field: { label: "Преимущество", name: feature, widget: string } }
+
+  - name: gallery
+    label: "Галерея"
+    label_singular: "Фото"
+    description: "Фотографии из жизни школы"
+    create: false
+    files:
+      - file: public/content/gallery.json
+        label: "Все фото"
+        name: gallery
+        fields:
+          - label: "Фотографии"
+            name: items
+            widget: list
+            fields:
+              - { label: "ID", name: id, widget: number, value_type: int }
+              - { label: "Изображение", name: image, widget: image }
+              - { label: "Название", name: title, widget: string }
+              - { label: "Описание", name: description, widget: text }
+              - { label: "Тип", name: type, widget: select, options: ["training", "competitions", "team"] }
+              - { label: "Бейдж", name: badge, widget: string }
+              - { label: "Дата", name: date, widget: string }
+              - { label: "Категория", name: category, widget: string }
+              - { label: "Избранное?", name: featured, widget: boolean, default: false }
+
+  - name: reviews
+    label: "Отзывы"
+    label_singular: "Отзыв"
+    description: "Отзывы учеников"
+    create: false
+    files:
+      - file: public/content/reviews.json
+        label: "Все отзывы"
+        name: reviews
+        fields:
+          - label: "Отзывы"
+            name: items
+            widget: list
+            fields:
+              - { label: "ID", name: id, widget: number, value_type: int }
+              - { label: "Имя", name: name, widget: string }
+              - { label: "Опыт", name: experience, widget: string }
+              - { label: "Текст отзыва", name: text, widget: text }
+              - { label: "Аватар", name: avatar, widget: image }
+              - { label: "Рейтинг", name: rating, widget: number, value_type: int, default: 5, min: 1, max: 5 }
+
+  - name: achievements
+    label: "Достижения"
+    label_singular: "Достижение"
+    description: "Фото достижений на главном экране"
+    create: false
+    files:
+      - file: public/content/achievements.json
+        label: "Все достижения"
+        name: achievements
+        fields:
+          - label: "Достижения"
+            name: items
+            widget: list
+            fields:
+              - { label: "Изображение", name: image, widget: image }
+              - { label: "Название", name: title, widget: string }
+              - { label: "CSS-класс позиции", name: positionClass, widget: string }
