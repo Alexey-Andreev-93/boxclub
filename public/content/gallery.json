@@ -1,6 +1,7 @@
 {
   "items": [
     {
+<<<<<<< HEAD
       "badge": "new",
       "featured": true,
       "date": "12.12.1912",
@@ -9,6 +10,104 @@
       "id": 13,
       "image": "/boxclub/images/снимок-экрана-от-2026-06-11-18-24-13.png",
       "description": "новое фото добавленное с помощью CMS\n",
+=======
+      "badge": "Тренировка",
+      "featured": true,
+      "date": "15.01.2024",
+      "title": "Профессиональная тренировка",
+      "type": "training",
+      "id": 1,
+      "image": "/images/gallery/gallery-1.jpg",
+      "description": "Индивидуальная работа с тренером над техникой ударов",
+      "category": "Тренировочный процесс"
+    },
+    {
+      "badge": "Победа",
+      "featured": false,
+      "date": "10.12.2023",
+      "title": "Золото регионального чемпионата",
+      "type": "competitions",
+      "id": 2,
+      "image": "/images/gallery/gallery-2.jpg",
+      "description": "Наш спортсмен завоевал первое место в весовой категории до 75кг",
+      "category": "Соревнования"
+    },
+    {
+      "badge": "Команда",
+      "featured": false,
+      "date": "05.11.2023",
+      "title": "Командные сборы",
+      "type": "team",
+      "id": 3,
+      "image": "/images/gallery/gallery-2.jpg",
+      "description": "Зимние тренировочные сборы в спортивном лагере",
+      "category": "Командные мероприятия"
+    },
+    {
+      "badge": "Спарринг",
+      "featured": false,
+      "date": "20.01.2024",
+      "title": "Работа в парах",
+      "type": "training",
+      "id": 4,
+      "image": "/images/trainer/trainer-1.jpg",
+      "description": "Отработка защитных техник и контратак в спаррингах",
+      "category": "Тренировочный процесс"
+    },
+    {
+      "badge": "Кубок",
+      "featured": false,
+      "date": "12.12.2023",
+      "title": "Кубок победителей",
+      "type": "competitions",
+      "id": 5,
+      "image": "/images/gallery/competition-1.jpg",
+      "description": "Завоевание главного трофея зимнего сезона",
+      "category": "Соревнования"
+    },
+    {
+      "badge": "ОФП",
+      "featured": false,
+      "date": "25.01.2024",
+      "title": "Силовая подготовка",
+      "type": "training",
+      "id": 6,
+      "image": "/images/gallery/team-1.jpg",
+      "description": "Развитие физической мощи для мощных нокаутирующих ударов",
+      "category": "Тренировочный процесс"
+    },
+    {
+      "badge": "Встреча",
+      "featured": false,
+      "date": "18.11.2023",
+      "title": "Товарищеская встреча",
+      "type": "team",
+      "id": 7,
+      "image": "/images/gallery/training-1.jpg",
+      "description": "Встреча с боксерами из соседнего клуба",
+      "category": "Командные мероприятия"
+    },
+    {
+      "badge": "Техника",
+      "featured": false,
+      "date": "30.01.2024",
+      "title": "Техника работы ног",
+      "type": "training",
+      "id": 8,
+      "image": "/images/hero/achievement.jpg",
+      "description": "Освоение правильной стойки и перемещений по рингу",
+      "category": "Тренировочный процесс"
+    },
+    {
+      "badge": "new",
+      "featured": true,
+      "date": "12.12.1912",
+      "title": "new",
+      "type": "competitions",
+      "id": 9,
+      "image": "/images/снимок-экрана-от-2026-06-11-18-24-13.png",
+      "description": "new image CMS",
+>>>>>>> d438924 (Add Decap CMS, switch to Netlify)
       "category": "new"
     }
   ]

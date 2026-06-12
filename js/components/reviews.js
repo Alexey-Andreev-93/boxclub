@@ -1,5 +1,12 @@
-import { REVIEW_ITEMS } from '../data/reviews.js';
-
 export const reviews = () => ({
-  reviews: REVIEW_ITEMS
+  reviews: [],
+
+  async init() {
+    try {
+      const data = await (await fetch(`${import.meta.env.BASE_URL}content/reviews.json`)).json();
+      this.reviews = data.items;
+    } catch (error) {
+      console.error("Ошибка загрузки отзывов:", error);
+    }
+  },
 });

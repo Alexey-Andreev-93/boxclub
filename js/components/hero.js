@@ -1,5 +1,3 @@
-import { HERO_ACHIEVEMENTS } from '../data/achievements.js';
-
 export const hero = () => ({
   // Данные для счетчиков
   stats: {
@@ -9,7 +7,7 @@ export const hero = () => ({
   },
 
   // Данные для галереи достижений
-  achievements: HERO_ACHIEVEMENTS,
+  achievements: [],
 
   // Данные для модального окна
   modal: {
@@ -18,9 +16,20 @@ export const hero = () => ({
     title: "",
   },
 
+  // Метод для загрузки данных
+  async loadAchievements() {
+    try {
+      const data = await (await fetch(`${import.meta.env.BASE_URL}content/achievements.json`)).json();
+      this.achievements = data.items;
+    } catch (error) {
+      console.error("Ошибка загрузки достижений:", error);
+    }
+  },
+
   // Метод для инициализации компонента
   init() {
     try {
+      this.loadAchievements();
       this.initParallax();
       // Анимация счетчиков при появлении в viewport
       const observer = new IntersectionObserver(

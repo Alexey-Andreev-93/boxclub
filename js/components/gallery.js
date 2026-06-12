@@ -1,8 +1,6 @@
-import { GALLERY_ITEMS } from '../data/gallery.js';
-
 export const gallery = () => ({
   // Данные галереи
-  items: GALLERY_ITEMS,
+  items: [],
 
   // Состояние
   activeFilter: "all",
@@ -175,8 +173,18 @@ export const gallery = () => ({
     }
   },
 
+  async loadGallery() {
+    try {
+      const data = await (await fetch(`${import.meta.env.BASE_URL}content/gallery.json`)).json();
+      this.items = data.items;
+    } catch (error) {
+      console.error("Ошибка загрузки галереи:", error);
+    }
+  },
+
   init() {
     try {
+      this.loadGallery();
       this.updateActiveFilterButtons();
 
       // Обработка клавиш

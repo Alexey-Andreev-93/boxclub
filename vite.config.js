@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { resolve } from 'path';
 
 export default defineConfig({
-  base: '/boxclub/',
+  base: '/',
   root: '.',
   build: {
     outDir: 'docs',
@@ -26,9 +26,11 @@ export default defineConfig({
   server: {
     port: 3000,
   },
+
   resolve: {
     alias: {
       '@': resolve(__dirname, 'js'),
     },
   },
+
 });

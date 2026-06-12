@@ -7,13 +7,27 @@
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 4rem;
-  align-items: start;
+  grid-template-rows: 500px;
 }
 
 .about__text {
   display: flex;
   flex-direction: column;
   gap: 2.5rem;
+  overflow-y: auto;
+}
+
+.about__text::-webkit-scrollbar {
+  width: 6px;
+}
+
+.about__text::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.about__text::-webkit-scrollbar-thumb {
+  background: var(--primary);
+  border-radius: 3px;
 }
 
 .about__description {
@@ -182,6 +196,7 @@
   .about__content {
     grid-template-columns: 1fr 1fr;
     gap: 3rem;
+    grid-template-rows: 450px;
   }
 
   .trainers-accordion {
@@ -219,6 +234,7 @@
   .about__content {
     grid-template-columns: 1fr;
     gap: 3.5rem;
+    grid-template-rows: auto;
   }
 
   .about__gallery {
@@ -234,6 +250,7 @@
 
   .about__text {
     gap: 2.2rem;
+    overflow-y: visible;
   }
 
   .about__description {
