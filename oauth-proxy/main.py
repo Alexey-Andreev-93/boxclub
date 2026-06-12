@@ -1,12 +1,20 @@
 import os
 import json
+import base64
+import hashlib
+import urllib.request
 
 GH_PAT = os.environ.get("GH_PAT", "")
 BASE_URL = os.environ.get("BASE_URL", "")
+ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH", "")
+GH_OWNER = "Alexey-Andreev-93"
+GH_REPO = "boxclub"
+GH_BRANCH = "main"
 
 
 def handler(event, context):
     path = event.get("path", event.get("requestContext", {}).get("path", ""))
+    method = event.get("httpMethod", event.get("requestContext", {}).get("method", "GET"))
     params = {}
     qp = event.get("queryStringParameters") or {}
     mqp = event.get("multiValueQueryStringParameters") or {}
@@ -15,37 +23,105 @@ def handler(event, context):
         if k not in params and v:
             params[k] = v[0] if isinstance(v, list) else v
 
+    if method == "POST":
+        try:
+            body = json.loads(event.get("body", "{}"))
+            params.update(body)
+        except (json.JSONDecodeError, TypeError):
+            pass
+
     if path.endswith("auth"):
         return handle_auth(params)
     elif path.endswith("callback"):
         return handle_callback(params)
+    elif path.endswith("admin/login"):
+        return handle_admin_login(params)
+    elif path.endswith("admin/save"):
+        return handle_admin_save(params)
     else:
         return respond(400, json.dumps({"path": path, "params": params}))
 
 
 def handle_auth(params):
     site_id = params.get("site_id", "")
-
     if not GH_PAT:
         return respond(500, "GH_PAT not configured")
-    if not BASE_URL:
-        return respond(500, "BASE_URL not configured")
-
     cms_url = ("https://" + site_id if site_id else "https://boxclub.website.yandexcloud.net")
     cms_url = cms_url.rstrip("/") + "/admin/auth-callback.html"
     return respond(302, "", headers={"Location": f"{cms_url}#access_token={GH_PAT}&provider=github"})
 
 
 def handle_callback(params):
-    return respond(200, "PAT mode — no OAuth callback needed")
+    return respond(200, "OK")
+
+
+def handle_admin_login(params):
+    password = params.get("password", "")
+    if not ADMIN_PASS_HASH:
+        return respond(500, "Admin password not configured")
+    pwd_hash = hashlib.sha256(password.encode()).hexdigest()
+    if pwd_hash != ADMIN_PASS_HASH:
+        return respond(401, json.dumps({"error": "Неверный пароль"}))
+    return respond(200, json.dumps({"success": True}))
+
+
+def handle_admin_save(params):
+    password = params.get("password", "")
+    files = params.get("files", [])
+
+    if not ADMIN_PASS_HASH:
+        return respond(500, json.dumps({"error": "Admin password not configured"}))
+    if hashlib.sha256(password.encode()).hexdigest() != ADMIN_PASS_HASH:
+        return respond(401, json.dumps({"error": "Неверный пароль"}))
+    if not GH_PAT:
+        return respond(500, json.dumps({"error": "GH_PAT not configured"}))
+
+    headers = {
+        "Authorization": f"Bearer {GH_PAT}",
+        "Accept": "application/vnd.github.v3+json",
+        "User-Agent": "boxclub-admin",
+    }
+    api = f"https://api.github.com/repos/{GH_OWNER}/{GH_REPO}"
+    results = []
+
+    for file in files:
+        path = file.get("path", "")
+        content = file.get("content", "")
+        try:
+            url = f"{api}/contents/{path}"
+            req = urllib.request.Request(url, headers=headers)
+            try:
+                resp = urllib.request.urlopen(req)
+                data = json.loads(resp.read())
+                sha = data["sha"]
+            except urllib.error.HTTPError as e:
+                if e.code == 404:
+                    sha = None
+                else:
+                    raise
+
+            body = json.dumps({
+                "message": "Updated via admin",
+                "content": base64.b64encode(content.encode()).decode(),
+                "sha": sha,
+                "branch": GH_BRANCH,
+            })
+            req = urllib.request.Request(url, data=body.encode(), headers=headers, method="PUT")
+            urllib.request.urlopen(req)
+            results.append({"path": path, "success": True})
+        except Exception as e:
+            results.append({"path": path, "success": False, "error": str(e)})
+
+    return respond(200, json.dumps({"success": True, "results": results}))
 
 
 def respond(code, body, headers=None):
-    h = {"Content-Type": "text/plain"}
+    h = {"Content-Type": "application/json"}
     if headers:
         h.update(headers)
     if code == 302:
         h.pop("Content-Type", None)
+        h["Access-Control-Allow-Origin"] = "*"
     return {
         "statusCode": code,
         "headers": h,
