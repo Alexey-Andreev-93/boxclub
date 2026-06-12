@@ -69,31 +69,19 @@ def s3_put(s3_path, file_path, content_type):
     urllib.request.urlopen(req)
 
 
-mime_map = {
-    ".html": "text/html",
-    ".css": "text/css",
-    ".js": "application/javascript",
-    ".json": "application/json",
-    ".webp": "image/webp",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".png": "image/png",
-    ".svg": "image/svg+xml",
-    ".ico": "image/x-icon",
-    ".xml": "application/xml",
-}
+import mimetypes
 
 docs = Path("docs")
 for path in sorted(docs.rglob("*")):
     if path.is_file():
         # Skip unused JPG originals (keep only WebP)
-        if path.suffix.lower() in (".jpg", ".jpeg", ".png") and path.suffix.lower() != ".webp":
+        if path.suffix.lower() in (".jpg", ".jpeg", ".png"):
             webp_path = path.with_suffix(".webp")
-            if webp_path.exists():
+            if webp_path.exists() and webp_path.name != path.name:
                 print(f"SKIP {path.relative_to(docs)} (WebP exists)")
                 continue
         s3_key = str(path.relative_to(docs))
-        ct = mime_map.get(path.suffix.lower(), "application/octet-stream")
+        ct = mimetypes.guess_type(str(path))[0] or "application/octet-stream"
         try:
             s3_put(s3_key, str(path), ct)
             print(f"OK   {s3_key}")

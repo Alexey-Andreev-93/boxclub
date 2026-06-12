@@ -9,9 +9,12 @@ BASE_URL = os.environ.get("BASE_URL", "")
 
 
 def handler(event, context):
-    method = event.get("httpMethod", "GET")
     path = event.get("path", event.get("requestContext", {}).get("path", ""))
     params = event.get("queryStringParameters") or {}
+    multi = event.get("multiValueQueryStringParameters") or {}
+    for k, v in multi.items():
+        if k not in params and v:
+            params[k] = v[0] if isinstance(v, list) else v
 
     if path.endswith("auth"):
         return handle_auth(params)
@@ -22,12 +25,17 @@ def handler(event, context):
 
 
 def handle_auth(params):
+    provider = params.get("provider", "github")
     scope = params.get("scope", "repo")
     redirect_uri = params.get("redirect_uri", "")
+    site_id = params.get("site_id", "")
     state = params.get("state", "")
 
-    if not redirect_uri:
-        return respond(400, "redirect_uri required")
+    # Use site_id as fallback for redirect_uri
+    final_redirect = redirect_uri or (site_id or "")
+
+    if not final_redirect:
+        return respond(400, "redirect_uri required. Params: " + json.dumps(params))
     if not BASE_URL:
         return respond(500, "BASE_URL not configured")
 
@@ -35,7 +43,7 @@ def handle_auth(params):
         "client_id": CLIENT_ID,
         "redirect_uri": BASE_URL.rstrip("/") + "/callback",
         "scope": scope,
-        "state": state,
+        "state": state or final_redirect,
     })
     gh_url = "https://github.com/login/oauth/authorize?" + gh_params
     return respond(302, "", headers={"Location": gh_url})
