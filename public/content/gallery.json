@@ -1,17 +1,6 @@
 {
   "items": [
     {
-      "id": 8,
-      "image": "/images/hero/achievement.webp",
-      "title": "Техника работы ног",
-      "description": "Освоение правильной стойки и перемещений по рингу",
-      "type": "training",
-      "badge": "Техника",
-      "date": "30.01.2024",
-      "category": "Тренировочный процесс",
-      "featured": false
-    },
-    {
       "id": 1,
       "image": "/images/gallery/gallery-1.webp",
       "title": "Профессиональная тренировка",
@@ -21,6 +10,17 @@
       "date": "15.01.2024",
       "category": "Тренировочный процесс",
       "featured": true
+    },
+    {
+      "id": 8,
+      "image": "/images/hero/achievement.webp",
+      "title": "Техника работы ног",
+      "description": "Освоение правильной стойки и перемещений по рингу",
+      "type": "training",
+      "badge": "Техника",
+      "date": "30.01.2024",
+      "category": "Тренировочный процесс",
+      "featured": false
     },
     {
       "id": 2,
