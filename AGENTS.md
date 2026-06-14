@@ -45,6 +45,10 @@ No tests, linter, or typechecker.
 - Added "Add/Remove category" buttons for training section
 - Cleaned up dead code (Decap leftovers, unused JS modules, stale build artifacts)
 
+### 4. Admin monolith → 3 files
+- Split `public/admin/index.html` (676 lines, all-in-one) into `index.html` + `style.css` + `app.js`
+- Added stale file cleanup to deploy script (sync bucket with local build)
+
 ## Architecture
 
 ```
@@ -53,7 +57,7 @@ js/main.js              — Alpine boot + component registration
 js/components/          — Alpine data components (header, hero, about, training, gallery, reviews)
 css/main.css            — imports base.css + components.css + sections/*.css
 css/sections/           — one CSS file per section
-public/admin/           — custom admin panel (index.html with embedded CSS/JS)
+public/admin/           — custom admin panel (index.html + style.css + app.js)
 public/content/         — JSON files edited via admin (training, gallery, reviews, achievements)
 public/images/          — images
 docs/                   — build output (gitignored)
