@@ -1,22 +1,10 @@
 export const trainingPricing = () => ({
-  categories: [],
-
   activeCategory: "children",
 
   // Состояние модального окна с расписанием
   scheduleModalOpen: false,
 
-  async loadTraining() {
-    try {
-      const data = await (await fetch(`${import.meta.env.BASE_URL}content/training.json`)).json();
-      this.categories = data.categories;
-    } catch (error) {
-      console.error("Ошибка загрузки тренировок:", error);
-    }
-  },
-
   init() {
-    this.loadTraining();
   },
 
   setActiveCategory(categoryId) {

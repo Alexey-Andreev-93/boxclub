@@ -6,9 +6,6 @@ export const hero = () => ({
     price: "0 ₽",
   },
 
-  // Данные для галереи достижений
-  achievements: [],
-
   // Данные для модального окна
   modal: {
     open: false,
@@ -16,20 +13,21 @@ export const hero = () => ({
     title: "",
   },
 
-  // Метод для загрузки данных
-  async loadAchievements() {
-    try {
-      const data = await (await fetch(`${import.meta.env.BASE_URL}content/achievements.json`)).json();
-      this.achievements = data.items;
-    } catch (error) {
-      console.error("Ошибка загрузки достижений:", error);
-    }
+  // Сборка инлайн-стиля для достижения
+  achievementStyle(a) {
+    let s = '';
+    if (a.top !== undefined) s += `top:${a.top}%;`;
+    if (a.left !== undefined) s += `left:${a.left}%;`;
+    if (a.right !== undefined) s += `right:${a.right}%;`;
+    if (a.bottom !== undefined) s += `bottom:${a.bottom}%;`;
+    if (a.rotate !== undefined) s += `transform:rotate(${a.rotate}deg);`;
+    if (a.duration !== undefined) s += `animation-duration:${a.duration}s;`;
+    return s;
   },
 
   // Метод для инициализации компонента
   init() {
     try {
-      this.loadAchievements();
       this.initParallax();
       // Анимация счетчиков при появлении в viewport
       const observer = new IntersectionObserver(

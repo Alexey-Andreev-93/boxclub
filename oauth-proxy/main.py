@@ -30,6 +30,9 @@ def handler(event, context):
         except (json.JSONDecodeError, TypeError):
             pass
 
+    if method == "OPTIONS":
+        return respond(200, json.dumps({"ok": True}))
+
     if path.endswith("admin/login"):
         return handle_admin_login(params)
     elif path.endswith("admin/save"):
@@ -156,9 +159,11 @@ def respond(code, body, headers=None):
     h = {"Content-Type": "application/json"}
     if headers:
         h.update(headers)
+    h["Access-Control-Allow-Origin"] = "*"
+    h["Access-Control-Allow-Headers"] = "Content-Type"
+    h["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
     if code == 302:
         h.pop("Content-Type", None)
-        h["Access-Control-Allow-Origin"] = "*"
     return {
         "statusCode": code,
         "headers": h,

@@ -20,8 +20,6 @@ jobs:
         with:
           python-version: '3.12'
 
-      - run: pip install boto3
-
       - name: Upload to Yandex Object Storage
         env:
           YC_KEY_ID: ${{ secrets.YC_KEY_ID }}

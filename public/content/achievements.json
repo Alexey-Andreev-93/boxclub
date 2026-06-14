@@ -3,22 +3,34 @@
     {
       "image": "/images/hero/achievement-1.webp",
       "title": "Чемпион кулачных боев 2023",
-      "positionClass": "hero__achievement--1"
+      "top": 0,
+      "left": 5,
+      "rotate": -5,
+      "duration": 10
     },
     {
       "image": "/images/hero/achievement-2.webp",
       "title": "Золото по боксу 2022",
-      "positionClass": "hero__achievement--2"
+      "top": 0,
+      "right": 10,
+      "rotate": 8,
+      "duration": 8
     },
     {
       "image": "/images/hero/achievement-3.webp",
       "title": "Турнир победителей 2024",
-      "positionClass": "hero__achievement--3"
+      "bottom": 35,
+      "left": 5,
+      "rotate": -10,
+      "duration": 11
     },
     {
       "image": "/images/hero/achievement-4.webp",
       "title": "Кубок чемпиона",
-      "positionClass": "hero__achievement--4"
+      "bottom": 30,
+      "right": 10,
+      "rotate": 5,
+      "duration": 9
     }
   ]
 }

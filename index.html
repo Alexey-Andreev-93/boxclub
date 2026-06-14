@@ -191,8 +191,8 @@
           </div>
 
           <!-- Галерея достижений -->
-          <template x-for="achievement in achievements" :key="achievement.image">
-            <div class="hero__achievement" :class="achievement.positionClass" role="button" tabindex="0"
+          <template x-for="achievement in $store.achievements.items" :key="achievement.image">
+            <div class="hero__achievement" :style="achievementStyle(achievement)" role="button" tabindex="0"
               @click="openModal(achievement)" @keydown.enter.prevent="openModal(achievement)"
               @keydown.space.prevent="openModal(achievement)" @mouseenter="pauseAnimation($event)"
               @mouseleave="resumeAnimation($event)">
@@ -314,7 +314,7 @@
       <div class="training__content" x-data="trainingPricing">
         <!-- Табы -->
         <div class="training-tabs">
-          <template x-for="(category, index) in categories" :key="category.id">
+          <template x-for="(category, index) in $store.training.categories" :key="category.id">
             <button class="training-tab" :class="{ 'training-tab--active': activeCategory === category.id }"
               @click="setActiveCategory(category.id)">
               <i :class="category.icon"></i>
@@ -325,7 +325,7 @@
 
         <!-- Контент табов -->
         <div class="training-tab-content">
-          <template x-for="category in categories" :key="category.id">
+          <template x-for="category in $store.training.categories" :key="category.id">
             <div x-show="activeCategory === category.id" class="pricing-table">
               <template x-for="plan in category.plans" :key="plan.id">
                 <div class="pricing-card" :class="{ 'pricing-card--popular': plan.popular }">
@@ -524,7 +524,7 @@
       <p class="reviews__subtitle">Что говорят о наших тренировках</p>
 
       <div class="reviews__grid">
-        <template x-for="review in reviews" :key="review.id">
+        <template x-for="review in $store.reviews.items" :key="review.id">
           <div class="review-card">
             <div class="review-card__content">
               <div class="review-card__stars">

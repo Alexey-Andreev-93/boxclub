@@ -13,7 +13,7 @@
   <div class="login-box">
     <h1>Управление контентом</h1>
     <input type="password" id="passwordInput" placeholder="Пароль" autofocus>
-    <button onclick="login()">Войти</button>
+    <button data-click="login-btn">Войти</button>
     <div id="loginError" class="login-error"></div>
   </div>
 </div>
@@ -21,13 +21,13 @@
 <div id="adminScreen" class="admin">
   <div class="sidebar">
     <h2>BoxClub CMS</h2>
-    <a class="active" onclick="switchTab('training')"><i class="fas fa-dumbbell"></i> Тренировки</a>
-    <a onclick="switchTab('gallery')"><i class="fas fa-images"></i> Галерея</a>
-    <a onclick="switchTab('reviews')"><i class="fas fa-star"></i> Отзывы</a>
-    <a onclick="switchTab('achievements')"><i class="fas fa-trophy"></i> Достижения</a>
-    <a onclick="switchTab('site')"><i class="fas fa-pen"></i> О школе</a>
-    <a onclick="switchTab('contact')"><i class="fas fa-address-card"></i> Контакты</a>
-    <a onclick="logout()" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.7rem;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+    <a class="active" data-click="switch-tab" data-tab="training"><i class="fas fa-dumbbell"></i> Тренировки</a>
+    <a data-click="switch-tab" data-tab="gallery"><i class="fas fa-images"></i> Галерея</a>
+    <a data-click="switch-tab" data-tab="reviews"><i class="fas fa-star"></i> Отзывы</a>
+    <a data-click="switch-tab" data-tab="achievements"><i class="fas fa-trophy"></i> Достижения</a>
+    <a data-click="switch-tab" data-tab="site"><i class="fas fa-pen"></i> О школе</a>
+    <a data-click="switch-tab" data-tab="contact"><i class="fas fa-address-card"></i> Контакты</a>
+    <a data-click="logout" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.7rem;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
   </div>
   <div class="main">
     <div id="section-training" class="section active"></div>
@@ -38,14 +38,14 @@
     <div id="section-contact" class="section"></div>
   </div>
   <div class="save-bar">
-    <button id="saveBtn" onclick="saveAll()">Сохранить всё</button>
+    <button id="saveBtn" data-click="save-all">Сохранить всё</button>
     <span id="saveStatus" class="save-status"></span>
   </div>
 </div>
 
 <div id="iconModal" class="icon-modal-overlay">
   <div class="icon-modal">
-    <button class="icon-modal-close" onclick="closeIconPicker()">&times;</button>
+    <button class="icon-modal-close" data-click="close-icon-picker-modal">&times;</button>
     <h3>Выберите иконку</h3>
     <div id="iconModalGrid" class="icon-picker"></div>
   </div>

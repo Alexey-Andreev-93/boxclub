@@ -263,32 +263,6 @@
   border-top: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-/* Позиции для каждого фото */
-.hero__achievement--1 {
-  top: 0%;
-  left: 5%;
-  transform: rotate(-5deg);
-}
-
-.hero__achievement--2 {
-  top: 0%;
-  right: 10%;
-  transform: rotate(8deg);
-}
-
-.hero__achievement--3 {
-  bottom: 35%;
-  left: 5%;
-  transform: rotate(-10deg);
-}
-
-.hero__achievement--4 {
-  bottom: 30%;
-  right: 10%;
-  transform: rotate(5deg);
-}
-
-
 /* Ховер-эффекты для достижений */
 .hero__achievement:hover {
   transform: scale(1.3) rotate(5deg) !important;
@@ -304,23 +278,6 @@
 .hero__achievement:hover .hero__achievement-tooltip {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
-}
-
-/* Разные скорости анимации для фото */
-.hero__achievement--1 {
-  animation-duration: 10s;
-}
-
-.hero__achievement--2 {
-  animation-duration: 8s;
-}
-
-.hero__achievement--3 {
-  animation-duration: 11s;
-}
-
-.hero__achievement--4 {
-  animation-duration: 9s;
 }
 
 /* Статистика */
@@ -413,22 +370,6 @@
     width: 60px;
     height: 60px;
   }
-
-  .hero__achievement--1 {
-    left: -25px;
-  }
-
-  .hero__achievement--2 {
-    right: -30px;
-  }
-
-  .hero__achievement--3 {
-    left: -20px;
-  }
-
-  .hero__achievement--4 {
-    right: -20px;
-  }
 }
 
 @media (max-width: 480px) {
@@ -495,25 +436,6 @@
   .hero__achievement {
     width: 50px;
     height: 50px;
-  }
-
-  .hero__achievement--1 {
-    left: -20px;
-  }
-
-  .hero__achievement--2 {
-    right: -25px;
-  }
-
-  .hero__achievement--3 {
-    left: -15px;
-  }
-
-  .hero__achievement--4 {
-    right: -15px;
-  }
-
-  .hero__achievement {
     display: none;
   }
 }

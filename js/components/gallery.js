@@ -1,7 +1,4 @@
 export const gallery = () => ({
-  // Данные галереи
-  items: [],
-
   // Состояние
   activeFilter: "all",
   currentPage: 0,
@@ -19,10 +16,11 @@ export const gallery = () => ({
   // Вычисляемые свойства
   get filteredItems() {
     try {
+      const items = this.$store.gallery.items || [];
       if (this.activeFilter === "all") {
-        return this.items;
+        return items;
       }
-      return this.items.filter((item) => item.type === this.activeFilter);
+      return items.filter((item) => item.type === this.activeFilter);
     } catch (error) {
       console.error("Ошибка при фильтрации элементов:", error);
       return [];
@@ -173,18 +171,8 @@ export const gallery = () => ({
     }
   },
 
-  async loadGallery() {
-    try {
-      const data = await (await fetch(`${import.meta.env.BASE_URL}content/gallery.json`)).json();
-      this.items = data.items;
-    } catch (error) {
-      console.error("Ошибка загрузки галереи:", error);
-    }
-  },
-
   init() {
     try {
-      this.loadGallery();
       this.updateActiveFilterButtons();
 
       // Обработка клавиш
