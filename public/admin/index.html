@@ -21,13 +21,15 @@
 <div id="adminScreen" class="admin">
   <div class="sidebar">
     <h2>BoxClub CMS</h2>
-    <a class="active" data-click="switch-tab" data-tab="training"><i class="fas fa-dumbbell"></i> Тренировки</a>
-    <a data-click="switch-tab" data-tab="gallery"><i class="fas fa-images"></i> Галерея</a>
-    <a data-click="switch-tab" data-tab="reviews"><i class="fas fa-star"></i> Отзывы</a>
-    <a data-click="switch-tab" data-tab="achievements"><i class="fas fa-trophy"></i> Достижения</a>
-    <a data-click="switch-tab" data-tab="site"><i class="fas fa-pen"></i> О школе</a>
-    <a data-click="switch-tab" data-tab="contact"><i class="fas fa-address-card"></i> Контакты</a>
-    <a data-click="logout" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.7rem;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
+    <div class="sidebar-nav">
+      <a class="active" data-click="switch-tab" data-tab="training"><i class="fas fa-dumbbell"></i> <span>Тренировки</span></a>
+      <a data-click="switch-tab" data-tab="gallery"><i class="fas fa-images"></i> <span>Галерея</span></a>
+      <a data-click="switch-tab" data-tab="reviews"><i class="fas fa-star"></i> <span>Отзывы</span></a>
+      <a data-click="switch-tab" data-tab="achievements"><i class="fas fa-trophy"></i> <span>Достижения</span></a>
+      <a data-click="switch-tab" data-tab="site"><i class="fas fa-pen"></i> <span>О школе</span></a>
+      <a data-click="switch-tab" data-tab="contact"><i class="fas fa-address-card"></i> <span>Контакты</span></a>
+    </div>
+    <div class="sidebar-logout"><a data-click="logout"><i class="fas fa-sign-out-alt"></i> Выйти</a></div>
   </div>
   <div class="main">
     <div id="section-training" class="section active"></div>

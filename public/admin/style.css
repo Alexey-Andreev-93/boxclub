@@ -9,11 +9,16 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .login-error { color: #e74c3c; font-size: 0.9rem; text-align: center; margin-top: 0.5rem; }
 .admin { display: none; }
 .admin.active { display: block; }
-.sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 220px; background: #1a1a2e; color: #fff; padding: 1.5rem 0; overflow-y: auto; }
+.sidebar { position: fixed; top: 0; left: 0; bottom: 0; width: 220px; background: #1a1a2e; color: #fff; padding: 1.5rem 0; overflow-y: auto; display: flex; flex-direction: column; }
 .sidebar h2 { font-size: 1rem; padding: 0 1.2rem; margin-bottom: 1.5rem; opacity: 0.8; }
-.sidebar a { display: block; padding: 0.7rem 1.2rem; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; cursor: pointer; }
-.sidebar a:hover, .sidebar a.active { background: rgba(255,255,255,0.08); color: #fff; }
-.sidebar a i { width: 20px; margin-right: 8px; }
+.sidebar-nav { flex: 1; }
+.sidebar-nav a { display: block; padding: 0.7rem 1.2rem; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; cursor: pointer; }
+.sidebar-nav a:hover, .sidebar-nav a.active { background: rgba(255,255,255,0.08); color: #fff; }
+.sidebar-nav a i { width: 20px; margin-right: 8px; }
+.sidebar-logout { border-top: 1px solid rgba(255,255,255,0.1); }
+.sidebar-logout a { display: block; padding: 0.7rem 1.2rem; color: rgba(255,255,255,0.7); text-decoration: none; font-size: 0.95rem; cursor: pointer; }
+.sidebar-logout a:hover { background: rgba(255,255,255,0.08); color: #fff; }
+.sidebar-logout a i { width: 20px; margin-right: 8px; }
 .main { margin-left: 220px; padding: 2rem; padding-bottom: 5rem; }
 .section { display: none; }
 .section.active { display: block; }
@@ -70,12 +75,18 @@ body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-
 .icon-preview-btn:hover { background: #e5e5e5; }
 .icon-preview-btn .preview-icon { font-size: 1.1rem; width: 24px; text-align: center; }
 @media (max-width: 768px) {
-  .sidebar { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: auto; padding: 0; display: flex; z-index: 20; }
+  .sidebar { position: fixed; top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: auto; padding: 0; z-index: 20; flex-direction: column; }
   .sidebar h2 { display: none; }
-  .sidebar a { flex: 1; text-align: center; padding: 0.6rem 0.2rem; font-size: 0.75rem; }
-  .sidebar a i { display: block; margin: 0 auto 2px; width: auto; font-size: 1.1rem; }
-  .main { margin-left: 0; padding: 1rem; padding-bottom: 7rem; }
-  .save-bar { left: 0; bottom: 52px; padding: 0.75rem 1rem; z-index: 30; }
+  .sidebar-nav { display: flex; width: 100%; flex: none; }
+  .sidebar-nav a { flex: 1; text-align: center; padding: 0.5rem 0.1rem; font-size: 0.65rem; }
+  .sidebar-nav a i { display: block; margin: 0 auto 3px; width: auto; font-size: 1.1rem; }
+  .sidebar-nav a.active { color: #fff; position: relative; }
+  .sidebar-nav a.active::after { content: ''; position: absolute; top: 0; left: 25%; right: 25%; height: 2px; background: #3498db; border-radius: 0 0 2px 2px; }
+  .sidebar-logout { width: 100%; border-top: 1px solid rgba(255,255,255,0.1); flex: none; }
+  .sidebar-logout a { text-align: center; padding: 0.45rem; font-size: 0.8rem; }
+  .sidebar-logout a i { margin-right: 4px; }
+  .main { margin-left: 0; padding: 1rem; padding-bottom: 10rem; }
+  .save-bar { left: 0; bottom: 100px; padding: 0.6rem 1rem; z-index: 30; }
   .save-bar button { flex: 1; }
   .login-box { width: calc(100% - 2rem); max-width: 360px; }
   .img-upload-wrap { flex-wrap: wrap; }
