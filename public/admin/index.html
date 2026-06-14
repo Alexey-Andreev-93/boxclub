@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>BoxClub — Админка</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.6/Sortable.min.js"></script>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
@@ -35,7 +36,9 @@
     .field textarea { resize: vertical; min-height: 60px; }
     .field .checkbox-wrap { display: flex; align-items: center; gap: 0.5rem; }
     .field .checkbox-wrap input { width: auto; }
-    .array-item { background: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 1rem; margin-bottom: 0.8rem; position: relative; }
+    .array-item { background: #fafafa; border: 1px solid #eee; border-radius: 6px; padding: 1rem 1rem 1rem 2rem; margin-bottom: 0.8rem; position: relative; }
+    .array-item .drag-handle { position: absolute; top: 0.5rem; left: 0.4rem; color: #bbb; cursor: grab; font-size: 0.9rem; }
+    .array-item .drag-handle:active { cursor: grabbing; }
     .array-item .remove-btn { position: absolute; top: 0.5rem; right: 0.5rem; background: none; border: none; color: #e74c3c; cursor: pointer; font-size: 1.1rem; }
     .add-btn { background: #eee; border: 1px dashed #ccc; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.9rem; width: 100%; text-align: center; color: #666; margin-bottom: 0.8rem; }
     .add-btn:hover { background: #e5e5e5; }
@@ -92,6 +95,7 @@
     <a onclick="switchTab('achievements')"><i class="fas fa-trophy"></i> Достижения</a>
     <a onclick="switchTab('site')"><i class="fas fa-pen"></i> О школе</a>
     <a onclick="switchTab('contact')"><i class="fas fa-address-card"></i> Контакты</a>
+    <a onclick="logout()" style="margin-top:auto;border-top:1px solid rgba(255,255,255,0.1);padding-top:0.7rem;"><i class="fas fa-sign-out-alt"></i> Выйти</a>
   </div>
   <div class="main">
     <div id="section-training" class="section active"></div>
@@ -159,8 +163,10 @@ function renderTraining() {
     html += '<div class="cat-header"><h3>' + esc(cat.title) + '</h3><button class="remove-cat-btn" onclick="removeCategory(' + ci + ')" title="Удалить категорию"><i class="fas fa-trash"></i></button></div>';
     html += '<div class="field"><label>Название категории</label><input value="' + esc(cat.title) + '" onchange="setTraining(' + ci + ',\'title\',this.value)"></div>';
     html += '<div class="field"><label>Иконка (FontAwesome)</label><input value="' + esc(cat.icon) + '" onchange="setTraining(' + ci + ',\'icon\',this.value)"></div>';
+    html += '<div class="plan-list" data-category="' + ci + '">';
     cat.plans.forEach(function(plan, pi) {
-      html += '<div class="array-item">';
+      html += '<div class="array-item" data-index="' + pi + '">';
+      html += '<i class="fas fa-grip-vertical drag-handle"></i>';
       html += '<button class="remove-btn" onclick="removePlan(' + ci + ',' + pi + ')"><i class="fas fa-times"></i></button>';
       html += '<div class="field"><label>Название тарифа</label><input value="' + esc(plan.title) + '" onchange="setPlan(' + ci + ',' + pi + ',\'title\',this.value)"></div>';
       html += '<div class="field"><label>Цена</label><input value="' + esc(plan.price) + '" onchange="setPlan(' + ci + ',' + pi + ',\'price\',this.value)"></div>';
@@ -171,19 +177,28 @@ function renderTraining() {
       html += '<div class="field"><label>Преимущества (каждое с новой строки)</label><textarea rows="3" onchange="setPlanFeatures(' + ci + ',' + pi + ',this.value)">' + esc((plan.features || []).join('\n')) + '</textarea></div>';
       html += '</div>';
     });
+    html += '</div>';
     html += '<button class="add-btn" onclick="addPlan(' + ci + ')"><i class="fas fa-plus"></i> Добавить тариф</button>';
     html += '</div>';
   });
   html += '<button class="add-btn" onclick="addCategory()" style="border-color:#999;color:#333;"><i class="fas fa-plus"></i> Добавить категорию</button>';
   el.innerHTML = html;
+  document.querySelectorAll('#section-training .plan-list').forEach(function(pl) {
+    var ci = parseInt(pl.getAttribute('data-category'));
+    if (!isNaN(ci) && content.training.categories[ci]) {
+      initSortable(pl, content.training.categories[ci].plans, renderTraining);
+    }
+  });
 }
 
 function renderGallery() {
   var el = document.getElementById('section-gallery');
   if (!content.gallery || !content.gallery.items) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
   var html = '<div class="section-header"><h2>Галерея</h2><p style="color:#888;font-size:0.85rem;">Для добавления фото выберите файл и оно загрузится автоматически</p></div>';
+  html += '<div class="sortable-container">';
   content.gallery.items.forEach(function(item, i) {
-    html += '<div class="card array-item">';
+    html += '<div class="card array-item" data-index="' + i + '">';
+    html += '<i class="fas fa-grip-vertical drag-handle"></i>';
     html += '<button class="remove-btn" onclick="removeGallery(' + i + ')"><i class="fas fa-times"></i></button>';
     html += '<div class="field"><label>Заголовок</label><input value="' + esc(item.title) + '" onchange="setGallery(' + i + ',\'title\',this.value)"></div>';
     html += '<div class="field"><label>Описание</label><textarea rows="2" onchange="setGallery(' + i + ',\'description\',this.value)">' + esc(item.description) + '</textarea></div>';
@@ -198,16 +213,21 @@ function renderGallery() {
     html += '<div class="field"><div class="checkbox-wrap"><input type="checkbox" ' + (item.featured?'checked':'') + ' onchange="setGallery(' + i + ',\'featured\',this.checked)"><label>Избранное?</label></div></div>';
     html += '</div>';
   });
+  html += '</div>';
   html += '<button class="add-btn" onclick="addGallery()"><i class="fas fa-plus"></i> Добавить фото</button>';
   el.innerHTML = html;
+  var gl = el.querySelector('.sortable-container');
+  if (gl) initSortable(gl, content.gallery.items, renderGallery);
 }
 
 function renderReviews() {
   var el = document.getElementById('section-reviews');
   if (!content.reviews || !content.reviews.items) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
   var html = '<div class="section-header"><h2>Отзывы</h2></div>';
+  html += '<div class="sortable-container">';
   content.reviews.items.forEach(function(item, i) {
-    html += '<div class="card array-item">';
+    html += '<div class="card array-item" data-index="' + i + '">';
+    html += '<i class="fas fa-grip-vertical drag-handle"></i>';
     html += '<button class="remove-btn" onclick="removeReview(' + i + ')"><i class="fas fa-times"></i></button>';
     html += '<div class="field"><label>Имя</label><input value="' + esc(item.name) + '" onchange="setReview(' + i + ',\'name\',this.value)"></div>';
     html += '<div class="field"><label>Опыт</label><input value="' + esc(item.experience) + '" onchange="setReview(' + i + ',\'experience\',this.value)"></div>';
@@ -220,16 +240,21 @@ function renderReviews() {
     html += '<div class="field"><label>Рейтинг (1-5)</label><input type="number" min="1" max="5" value="' + item.rating + '" onchange="setReview(' + i + ',\'rating\',parseInt(this.value)||5)"></div>';
     html += '</div>';
   });
+  html += '</div>';
   html += '<button class="add-btn" onclick="addReview()"><i class="fas fa-plus"></i> Добавить отзыв</button>';
   el.innerHTML = html;
+  var rv = el.querySelector('.sortable-container');
+  if (rv) initSortable(rv, content.reviews.items, renderReviews);
 }
 
 function renderAchievements() {
   var el = document.getElementById('section-achievements');
   if (!content.achievements || !content.achievements.items) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
   var html = '<div class="section-header"><h2>Достижения</h2></div>';
+  html += '<div class="sortable-container">';
   content.achievements.items.forEach(function(item, i) {
-    html += '<div class="card array-item">';
+    html += '<div class="card array-item" data-index="' + i + '">';
+    html += '<i class="fas fa-grip-vertical drag-handle"></i>';
     html += '<button class="remove-btn" onclick="removeAchievement(' + i + ')"><i class="fas fa-times"></i></button>';
     html += '<div class="field"><label>Название</label><input value="' + esc(item.title) + '" onchange="setAchievement(' + i + ',\'title\',this.value)"></div>';
     html += '<div class="field"><label>Фото</label><div class="img-upload-wrap">';
@@ -240,8 +265,11 @@ function renderAchievements() {
     html += '<div class="field"><label>CSS-класс</label><input value="' + esc(item.positionClass) + '" onchange="setAchievement(' + i + ',\'positionClass\',this.value)"></div>';
     html += '</div>';
   });
+  html += '</div>';
   html += '<button class="add-btn" onclick="addAchievement()"><i class="fas fa-plus"></i> Добавить достижение</button>';
   el.innerHTML = html;
+  var ac = el.querySelector('.sortable-container');
+  if (ac) initSortable(ac, content.achievements.items, renderAchievements);
 }
 
 function renderSite() {
@@ -251,9 +279,11 @@ function renderSite() {
 
   // === TRAINERS ===
   h += '<div class="card"><h3>Тренеры</h3>';
+  h += '<div class="sortable-container">';
   var trainers = getSite('about.trainers', []);
   trainers.forEach(function(t, i) {
-    h += '<div class="array-item">';
+    h += '<div class="array-item" data-index="' + i + '">';
+    h += '<i class="fas fa-grip-vertical drag-handle"></i>';
     h += '<button class="remove-btn" onclick="removeTrainer(' + i + ')"><i class="fas fa-times"></i></button>';
     h += '<div class="field"><label>Имя</label><input value="' + esc(t.name) + '" onchange="setSite(\'about.trainers.' + i + '.name\',this.value)"></div>';
     h += '<div class="field"><label>Должность</label><input value="' + esc(t.title) + '" onchange="setSite(\'about.trainers.' + i + '.title\',this.value)"></div>';
@@ -264,6 +294,7 @@ function renderSite() {
     h += '<span class="img-path">' + esc(t.image || 'нет фото') + '</span></div></div>';
     h += '</div>';
   });
+  h += '</div>';
   h += '<button class="add-btn" onclick="addTrainer()"><i class="fas fa-plus"></i> Добавить тренера</button>';
   h += '</div>';
 
@@ -275,15 +306,18 @@ function renderSite() {
 
   // === FEATURES ===
   h += '<div class="card"><h3>Преимущества</h3>';
+  h += '<div class="sortable-container">';
   var afeats = getSite('about.features', []);
   afeats.forEach(function(f, i) {
-    h += '<div class="array-item">';
+    h += '<div class="array-item" data-index="' + i + '">';
+    h += '<i class="fas fa-grip-vertical drag-handle"></i>';
     h += '<button class="remove-btn" onclick="removeAboutFeature(' + i + ')"><i class="fas fa-times"></i></button>';
     h += '<div class="field"><label>Иконка</label><input value="' + esc(f.icon) + '" onchange="setSite(\'about.features.' + i + '.icon\',this.value)"></div>';
     h += '<div class="field"><label>Заголовок</label><input value="' + esc(f.title) + '" onchange="setSite(\'about.features.' + i + '.title\',this.value)"></div>';
     h += '<div class="field"><label>Текст</label><input value="' + esc(f.text) + '" onchange="setSite(\'about.features.' + i + '.text\',this.value)"></div>';
     h += '</div>';
   });
+  h += '</div>';
   h += '<button class="add-btn" onclick="addAboutFeature()"><i class="fas fa-plus"></i> Добавить преимущество</button>';
   h += '</div>';
 
@@ -295,6 +329,9 @@ function renderSite() {
   h += '</div>';
 
   el.innerHTML = h;
+  var sorts = el.querySelectorAll('.card .sortable-container');
+  if (sorts[0]) initSortable(sorts[0], getSite('about.trainers', []), renderSite);
+  if (sorts[1]) initSortable(sorts[1], getSite('about.features', []), renderSite);
 }
 
 function renderContact() {
@@ -361,7 +398,7 @@ function addScheduleGroup() {
   content.contact.schedule.push({group: 'Новая группа', days: [{days: 'Пн, Ср, Пт', time: '00:00–00:00'}]});
   renderContact();
 }
-function removeScheduleGroup(i) { content.contact.schedule.splice(i, 1); renderContact(); }
+function removeScheduleGroup(i) { if (confirm('Удалить группу расписания?')) { content.contact.schedule.splice(i, 1); renderContact(); } }
 function addScheduleDay(gi) {
   content.contact.schedule[gi].days.push({days: '', time: ''});
   renderContact();
@@ -423,7 +460,7 @@ function addTrainer() {
   content.site.about.trainers.push({name: 'Новый тренер', title: 'Должность', image: ''});
   renderSite();
 }
-function removeTrainer(i) { content.site.about.trainers.splice(i, 1); renderSite(); }
+function removeTrainer(i) { if (confirm('Удалить тренера?')) { content.site.about.trainers.splice(i, 1); renderSite(); } }
 
 function uploadTrainerImage(index, input) {
   var file = input.files[0];
@@ -463,18 +500,18 @@ function addAboutFeature() {
   content.site.about.features.push({icon: 'fas fa-check', title: '', text: ''});
   renderSite();
 }
-function removeAboutFeature(i) { content.site.about.features.splice(i, 1); renderSite(); }
+function removeAboutFeature(i) { if (confirm('Удалить преимущество?')) { content.site.about.features.splice(i, 1); renderSite(); } }
 
 function addPlan(ci) { content.training.categories[ci].plans.push({id:'new-'+Date.now(),title:'',price:'',perClass:'',popular:false,features:[]}); renderTraining(); }
-function removePlan(ci,pi) { content.training.categories[ci].plans.splice(pi,1); renderTraining(); }
+function removePlan(ci,pi) { if (confirm('Удалить тариф?')) { content.training.categories[ci].plans.splice(pi,1); renderTraining(); } }
 function addCategory() { content.training.categories.push({id:'cat-'+Date.now(),title:'Новая категория',icon:'fas fa-user',plans:[]}); renderTraining(); }
 function removeCategory(ci) { if (confirm('Удалить категорию?')) { content.training.categories.splice(ci,1); renderTraining(); } }
 function addGallery() { content.gallery.items.push({id:Date.now(),image:'',title:'',description:'',type:'training',badge:'',date:'',featured:false}); renderGallery(); }
-function removeGallery(i) { content.gallery.items.splice(i,1); renderGallery(); }
+function removeGallery(i) { if (confirm('Удалить фото?')) { content.gallery.items.splice(i,1); renderGallery(); } }
 function addReview() { content.reviews.items.push({id:Date.now(),name:'',experience:'',text:'',avatar:'',rating:5}); renderReviews(); }
-function removeReview(i) { content.reviews.items.splice(i,1); renderReviews(); }
+function removeReview(i) { if (confirm('Удалить отзыв?')) { content.reviews.items.splice(i,1); renderReviews(); } }
 function addAchievement() { content.achievements.items.push({image:'',title:'',positionClass:'hero__achievement--new'}); renderAchievements(); }
-function removeAchievement(i) { content.achievements.items.splice(i,1); renderAchievements(); }
+function removeAchievement(i) { if (confirm('Удалить достижение?')) { content.achievements.items.splice(i,1); renderAchievements(); } }
 
 function uploadImage(index, folder, input, field) {
   field = field || 'image';
@@ -514,6 +551,39 @@ function uploadImage(index, folder, input, field) {
     });
   };
   reader.readAsDataURL(file);
+}
+
+function logout() {
+  sessionStorage.removeItem('boxclub_pass');
+  password = '';
+  document.getElementById('adminScreen').classList.remove('active');
+  document.getElementById('loginScreen').style.display = '';
+  document.getElementById('passwordInput').value = '';
+  document.getElementById('loginError').textContent = '';
+}
+
+function initSortable(el, array, renderFn) {
+  if (!window.Sortable) return;
+  if (!el) return;
+  var items = el.querySelectorAll('.array-item');
+  if (!items.length) return;
+  var container = items[0].parentNode;
+  new Sortable(container, {
+    animation: 150,
+    handle: '.drag-handle',
+    draggable: '.array-item',
+    onEnd: function() {
+      var sorted = [];
+      container.querySelectorAll('.array-item').forEach(function(item) {
+        var idx = parseInt(item.getAttribute('data-index'));
+        if (!isNaN(idx) && array[idx]) sorted.push(array[idx]);
+      });
+      if (sorted.length === array.length) {
+        array.splice(0, array.length, ...sorted);
+        renderFn();
+      }
+    }
+  });
 }
 
 function switchTab(name) {

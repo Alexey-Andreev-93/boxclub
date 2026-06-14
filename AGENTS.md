@@ -1,5 +1,9 @@
 # boxclub — Школа бокса
 
+## Language
+
+Всё общение — на русском. Английский допускается только в коде и терминах (API, HTML, JSON, npm, etc.). Комментарии в AGENTS.md, сообщения пользователю — строго на русском.
+
 Landing page for a boxing school. Deployed on Yandex Cloud.
 
 ## Stack
