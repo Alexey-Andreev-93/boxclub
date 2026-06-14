@@ -28,19 +28,22 @@ const defaults = {
 
 Object.entries(defaults).forEach(([key, val]) => Alpine.store(key, val));
 
-function fetchJson(url, fallback) {
+function fetchJson(url, fallback, key) {
+  if (window.__INITIAL_STATE__?.[key]) {
+    return Promise.resolve(window.__INITIAL_STATE__[key]);
+  }
   return fetch(url, { signal: AbortSignal.timeout(5000) })
     .then(r => r.ok ? r.json() : Promise.reject(new Error(`${r.status}`)))
     .catch(() => fallback);
 }
 
 Promise.all([
-  fetchJson(`${BASE}content/site.json`, defaults.site).then(d => { Alpine.store('site', d); }),
-  fetchJson(`${BASE}content/contact.json`, defaults.contact).then(d => { Alpine.store('contact', d); }),
-  fetchJson(`${BASE}content/achievements.json`, defaults.achievements).then(d => { Alpine.store('achievements', d); }),
-  fetchJson(`${BASE}content/training.json`, defaults.training).then(d => { Alpine.store('training', d); }),
-  fetchJson(`${BASE}content/gallery.json`, defaults.gallery).then(d => { Alpine.store('gallery', d); }),
-  fetchJson(`${BASE}content/reviews.json`, defaults.reviews).then(d => { Alpine.store('reviews', d); }),
+  fetchJson(`${BASE}content/site.json`, defaults.site, 'site').then(d => { Alpine.store('site', d); }),
+  fetchJson(`${BASE}content/contact.json`, defaults.contact, 'contact').then(d => { Alpine.store('contact', d); }),
+  fetchJson(`${BASE}content/achievements.json`, defaults.achievements, 'achievements').then(d => { Alpine.store('achievements', d); }),
+  fetchJson(`${BASE}content/training.json`, defaults.training, 'training').then(d => { Alpine.store('training', d); }),
+  fetchJson(`${BASE}content/gallery.json`, defaults.gallery, 'gallery').then(d => { Alpine.store('gallery', d); }),
+  fetchJson(`${BASE}content/reviews.json`, defaults.reviews, 'reviews').then(d => { Alpine.store('reviews', d); }),
 ]);
 
 Alpine.start();
