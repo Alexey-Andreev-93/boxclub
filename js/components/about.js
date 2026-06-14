@@ -1,18 +1,15 @@
 export const aboutGallery = () => ({
-  activeTrainer: 0, // 0 означает, что ничего не активно
+  activeTrainer: -1,
 
   init() {
     try {
-      // На десктопе по умолчанию показываем первого тренера
       if (window.innerWidth > 756) {
-        this.activeTrainer = 1;
+        this.activeTrainer = 0;
       }
-
-      // Слушаем изменения размера окна
       window.addEventListener("resize", () => {
         try {
-          if (window.innerWidth > 756 && this.activeTrainer === 0) {
-            this.activeTrainer = 1;
+          if (window.innerWidth > 756 && this.activeTrainer === -1) {
+            this.activeTrainer = 0;
           }
         } catch (error) {
           console.error("Ошибка при обработке изменения размера окна:", error);
@@ -23,26 +20,22 @@ export const aboutGallery = () => ({
     }
   },
 
-  // Простой метод для переключения тренеров
-  toggleTrainer(trainerId) {
+  toggleTrainer(index) {
     try {
       if (window.innerWidth <= 756) {
-        // На мобильных: переключаем (если кликаем на активного - закрываем)
-        this.activeTrainer = this.activeTrainer === trainerId ? 0 : trainerId;
+        this.activeTrainer = this.activeTrainer === index ? -1 : index;
       } else {
-        // На десктопе: просто активируем
-        this.activeTrainer = trainerId;
+        this.activeTrainer = index;
       }
     } catch (error) {
       console.error("Ошибка при переключении тренера:", error);
     }
   },
 
-  // Для десктопа - активация при наведении
-  activateTrainer(trainerId) {
+  activateTrainer(index) {
     try {
       if (window.innerWidth > 756) {
-        this.activeTrainer = trainerId;
+        this.activeTrainer = index;
       }
     } catch (error) {
       console.error("Ошибка при активации тренера:", error);

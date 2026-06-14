@@ -90,12 +90,16 @@
     <a onclick="switchTab('gallery')"><i class="fas fa-images"></i> Галерея</a>
     <a onclick="switchTab('reviews')"><i class="fas fa-star"></i> Отзывы</a>
     <a onclick="switchTab('achievements')"><i class="fas fa-trophy"></i> Достижения</a>
+    <a onclick="switchTab('site')"><i class="fas fa-pen"></i> О школе</a>
+    <a onclick="switchTab('contact')"><i class="fas fa-address-card"></i> Контакты</a>
   </div>
   <div class="main">
     <div id="section-training" class="section active"></div>
     <div id="section-gallery" class="section"></div>
     <div id="section-reviews" class="section"></div>
     <div id="section-achievements" class="section"></div>
+    <div id="section-site" class="section"></div>
+    <div id="section-contact" class="section"></div>
   </div>
   <div class="save-bar">
     <button id="saveBtn" onclick="saveAll()">Сохранить всё</button>
@@ -133,7 +137,7 @@ function loadContent() {
   document.getElementById('adminScreen').classList.add('active');
   password = sessionStorage.getItem('boxclub_pass');
   if (!password) return location.reload();
-  var files = ['training', 'gallery', 'reviews', 'achievements'];
+  var files = ['training', 'gallery', 'reviews', 'achievements', 'site', 'contact'];
   var loaded = 0;
   files.forEach(function(name) {
     fetch('/content/' + name + '.json')
@@ -143,7 +147,7 @@ function loadContent() {
   });
 }
 
-function renderAll() { renderTraining(); renderGallery(); renderReviews(); renderAchievements(); }
+function renderAll() { renderTraining(); renderGallery(); renderReviews(); renderAchievements(); renderSite(); renderContact(); }
 function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/'/g,'&#39;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'&#10;'); }
 
 function renderTraining() {
@@ -240,12 +244,226 @@ function renderAchievements() {
   el.innerHTML = html;
 }
 
+function renderSite() {
+  var el = document.getElementById('section-site');
+  if (!content.site) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
+  var h = '<div class="section-header"><h2>О школе</h2><p style="color:#888;font-size:0.85rem;">Тренеры, текст и преимущества секции «О школе»</p></div>';
+
+  // === TRAINERS ===
+  h += '<div class="card"><h3>Тренеры</h3>';
+  var trainers = getSite('about.trainers', []);
+  trainers.forEach(function(t, i) {
+    h += '<div class="array-item">';
+    h += '<button class="remove-btn" onclick="removeTrainer(' + i + ')"><i class="fas fa-times"></i></button>';
+    h += '<div class="field"><label>Имя</label><input value="' + esc(t.name) + '" onchange="setSite(\'about.trainers.' + i + '.name\',this.value)"></div>';
+    h += '<div class="field"><label>Должность</label><input value="' + esc(t.title) + '" onchange="setSite(\'about.trainers.' + i + '.title\',this.value)"></div>';
+    h += '<div class="field"><label>Фото</label><div class="img-upload-wrap">';
+    if (t.image) h += '<img class="img-preview" src="' + esc(t.image) + '">';
+    h += '<input type="file" accept="image/*" id="trainer-file-' + i + '" onchange="uploadTrainerImage(' + i + ',this)">';
+    h += '<label class="img-label" for="trainer-file-' + i + '"><i class="fas fa-upload"></i> Выбрать файл</label>';
+    h += '<span class="img-path">' + esc(t.image || 'нет фото') + '</span></div></div>';
+    h += '</div>';
+  });
+  h += '<button class="add-btn" onclick="addTrainer()"><i class="fas fa-plus"></i> Добавить тренера</button>';
+  h += '</div>';
+
+  // === ABOUT TEXT ===
+  h += '<div class="card"><h3>Текст о школе</h3>';
+  h += '<div class="field"><label>Заголовок секции</label><input value="' + esc(getSite('about.title','')) + '" onchange="setSite(\'about.title\',this.value)"></div>';
+  h += '<div class="field"><label>Описание (каждый абзац с новой строки)</label><textarea rows="4" onchange="setSite(\'about.description\',this.value.split(\'\\n\').filter(Boolean))">' + esc((getSite('about.description',[])||[]).join('\n')) + '</textarea></div>';
+  h += '</div>';
+
+  // === FEATURES ===
+  h += '<div class="card"><h3>Преимущества</h3>';
+  var afeats = getSite('about.features', []);
+  afeats.forEach(function(f, i) {
+    h += '<div class="array-item">';
+    h += '<button class="remove-btn" onclick="removeAboutFeature(' + i + ')"><i class="fas fa-times"></i></button>';
+    h += '<div class="field"><label>Иконка</label><input value="' + esc(f.icon) + '" onchange="setSite(\'about.features.' + i + '.icon\',this.value)"></div>';
+    h += '<div class="field"><label>Заголовок</label><input value="' + esc(f.title) + '" onchange="setSite(\'about.features.' + i + '.title\',this.value)"></div>';
+    h += '<div class="field"><label>Текст</label><input value="' + esc(f.text) + '" onchange="setSite(\'about.features.' + i + '.text\',this.value)"></div>';
+    h += '</div>';
+  });
+  h += '<button class="add-btn" onclick="addAboutFeature()"><i class="fas fa-plus"></i> Добавить преимущество</button>';
+  h += '</div>';
+
+  // === CTA ===
+  h += '<div class="card"><h3>Кнопка CTA</h3>';
+  h += '<div class="field"><label>Текст</label><input value="' + esc(getSite('about.cta.text','')) + '" onchange="setSite(\'about.cta.text\',this.value)"></div>';
+  h += '<div class="field"><label>Иконка</label><input value="' + esc(getSite('about.cta.icon','')) + '" onchange="setSite(\'about.cta.icon\',this.value)"></div>';
+  h += '<div class="field"><label>Ссылка</label><input value="' + esc(getSite('about.cta.link','')) + '" onchange="setSite(\'about.cta.link\',this.value)"></div>';
+  h += '</div>';
+
+  el.innerHTML = h;
+}
+
+function renderContact() {
+  var el = document.getElementById('section-contact');
+  if (!content.contact) { el.innerHTML = '<div class="loading">Нет данных</div>'; return; }
+  var h = '<div class="section-header"><h2>Контакты</h2><p style="color:#888;font-size:0.85rem;">Телефон, соцсети, адрес, расписание, футер</p></div>';
+
+  h += '<div class="card"><h3>Телефон и соцсети</h3>';
+  h += '<div class="field"><label>Телефон (отображаемый)</label><input value="' + esc(getContact('phone','')) + '" onchange="setContact(\'phone\',this.value)"></div>';
+  h += '<div class="field"><label>Телефон (raw, для ссылки)</label><input value="' + esc(getContact('phoneRaw','')) + '" onchange="setContact(\'phoneRaw\',this.value)"></div>';
+  h += '<div class="field"><label>WhatsApp URL</label><input value="' + esc(getContact('whatsapp.url','')) + '" onchange="setContact(\'whatsapp.url\',this.value)"></div>';
+  h += '<div class="field"><label>Telegram</label><input value="' + esc(getContact('telegram','')) + '" onchange="setContact(\'telegram\',this.value)"></div>';
+  h += '<div class="field"><label>VK</label><input value="' + esc(getContact('vk','')) + '" onchange="setContact(\'vk\',this.value)"></div>';
+  h += '</div>';
+
+  h += '<div class="card"><h3>Адрес и время работы</h3>';
+  h += '<div class="field"><label>Регион</label><input value="' + esc(getContact('address.region','')) + '" onchange="setContact(\'address.region\',this.value)"></div>';
+  h += '<div class="field"><label>Улица</label><input value="' + esc(getContact('address.street','')) + '" onchange="setContact(\'address.street\',this.value)"></div>';
+  h += '<div class="field"><label>Полный адрес</label><input value="' + esc(getContact('address.full','')) + '" onchange="setContact(\'address.full\',this.value)"></div>';
+  h += '<div class="field"><label>Будни</label><input value="' + esc(getContact('hours.weekdays','')) + '" onchange="setContact(\'hours.weekdays\',this.value)"></div>';
+  h += '<div class="field"><label>Выходные</label><input value="' + esc(getContact('hours.weekends','')) + '" onchange="setContact(\'hours.weekends\',this.value)"></div>';
+  h += '</div>';
+
+  h += '<div class="card"><h3>Расписание</h3>';
+  var sched = getContact('schedule', []);
+  sched.forEach(function(g, gi) {
+    h += '<div class="array-item">';
+    h += '<button class="remove-btn" onclick="removeScheduleGroup(' + gi + ')"><i class="fas fa-times"></i></button>';
+    h += '<div class="field"><label>Группа</label><input value="' + esc(g.group) + '" onchange="setContact(\'schedule.' + gi + '.group\',this.value)"></div>';
+    (g.days || []).forEach(function(d, di) {
+      h += '<div style="display:flex;gap:0.5rem;margin-bottom:0.5rem">';
+      h += '<input style="flex:1" value="' + esc(d.days) + '" placeholder="Дни" onchange="setContact(\'schedule.' + gi + '.days.' + di + '.days\',this.value)">';
+      h += '<input style="flex:1" value="' + esc(d.time) + '" placeholder="Время" onchange="setContact(\'schedule.' + gi + '.days.' + di + '.time\',this.value)">';
+      h += '<button style="background:none;border:none;color:#e74c3c" onclick="removeScheduleDay(' + gi + ',' + di + ')"><i class="fas fa-times"></i></button>';
+      h += '</div>';
+    });
+    h += '<button class="add-btn" onclick="addScheduleDay(' + gi + ')"><i class="fas fa-plus"></i> Добавить день</button>';
+    h += '</div>';
+  });
+  h += '<button class="add-btn" onclick="addScheduleGroup()"><i class="fas fa-plus"></i> Добавить группу</button>';
+  h += '</div>';
+
+  h += '<div class="card"><h3>Преимущества мессенджеров</h3>';
+  h += '<div class="field"><label>Заголовок</label><input value="' + esc(getContact('benefitsTitle','')) + '" onchange="setContact(\'benefitsTitle\',this.value)"></div>';
+  h += '<div class="field"><label>Пункты (каждый с новой строки)</label><textarea rows="4" onchange="setContact(\'benefits\',this.value.split(\'\\n\').filter(Boolean))">' + esc((getContact('benefits',[])||[]).join('\n')) + '</textarea></div>';
+  h += '<div class="field"><label>Примечание</label><input value="' + esc(getContact('benefitsNote','')) + '" onchange="setContact(\'benefitsNote\',this.value)"></div>';
+  h += '</div>';
+
+  h += '<div class="card"><h3>Футер</h3>';
+  h += '<div class="field"><label>Логотип — заголовок</label><input value="' + esc(getContact('footer.logoTitle','')) + '" onchange="setContact(\'footer.logoTitle\',this.value)"></div>';
+  h += '<div class="field"><label>Логотип — подзаголовок</label><input value="' + esc(getContact('footer.logoSubtitle','')) + '" onchange="setContact(\'footer.logoSubtitle\',this.value)"></div>';
+  h += '<div class="field"><label>Описание</label><textarea rows="2" onchange="setContact(\'footer.description\',this.value)">' + esc(getContact('footer.description','')) + '</textarea></div>';
+  h += '<div class="field"><label>CTA — заголовок</label><input value="' + esc(getContact('footer.cta.text','')) + '" onchange="setContact(\'footer.cta.text\',this.value)"></div>';
+  h += '<div class="field"><label>CTA — подтекст</label><input value="' + esc(getContact('footer.cta.subtext','')) + '" onchange="setContact(\'footer.cta.subtext\',this.value)"></div>';
+  h += '<div class="field"><label>CTA — текст кнопки</label><input value="' + esc(getContact('footer.cta.buttonText','')) + '" onchange="setContact(\'footer.cta.buttonText\',this.value)"></div>';
+  h += '<div class="field"><label>CTA — ссылка кнопки</label><input value="' + esc(getContact('footer.cta.buttonLink','')) + '" onchange="setContact(\'footer.cta.buttonLink\',this.value)"></div>';
+  h += '</div>';
+
+  el.innerHTML = h;
+}
+
+function addScheduleGroup() {
+  if (!content.contact.schedule) content.contact.schedule = [];
+  content.contact.schedule.push({group: 'Новая группа', days: [{days: 'Пн, Ср, Пт', time: '00:00–00:00'}]});
+  renderContact();
+}
+function removeScheduleGroup(i) { content.contact.schedule.splice(i, 1); renderContact(); }
+function addScheduleDay(gi) {
+  content.contact.schedule[gi].days.push({days: '', time: ''});
+  renderContact();
+}
+function removeScheduleDay(gi, di) {
+  content.contact.schedule[gi].days.splice(di, 1);
+  renderContact();
+}
+
 function setTraining(ci,k,v) { content.training.categories[ci][k]=v; }
 function setPlan(ci,pi,k,v) { content.training.categories[ci].plans[pi][k]=v; }
 function setPlanFeatures(ci,pi,v) { content.training.categories[ci].plans[pi].features=v.split('\n').filter(Boolean); }
 function setGallery(i,k,v) { content.gallery.items[i][k]=v; }
 function setReview(i,k,v) { content.reviews.items[i][k]=v; }
 function setAchievement(i,k,v) { content.achievements.items[i][k]=v; }
+
+function setSite(path, v) {
+  var parts = path.split('.');
+  var obj = content.site;
+  for (var p = 0; p < parts.length - 1; p++) {
+    if (!obj[parts[p]]) obj[parts[p]] = {};
+    obj = obj[parts[p]];
+  }
+  obj[parts[parts.length - 1]] = v;
+}
+
+function getSite(path, def) {
+  var parts = path.split('.');
+  var obj = content.site;
+  for (var p = 0; p < parts.length; p++) {
+    if (!obj || typeof obj !== 'object') return def;
+    obj = obj[parts[p]];
+  }
+  return obj !== undefined ? obj : def;
+}
+
+function setContact(path, v) {
+  var parts = path.split('.');
+  var obj = content.contact;
+  for (var p = 0; p < parts.length - 1; p++) {
+    if (!obj[parts[p]]) obj[parts[p]] = {};
+    obj = obj[parts[p]];
+  }
+  obj[parts[parts.length - 1]] = v;
+}
+
+function getContact(path, def) {
+  var parts = path.split('.');
+  var obj = content.contact;
+  for (var p = 0; p < parts.length; p++) {
+    if (!obj || typeof obj !== 'object') return def;
+    obj = obj[parts[p]];
+  }
+  return obj !== undefined ? obj : def;
+}
+
+function addTrainer() {
+  if (!content.site.about.trainers) content.site.about.trainers = [];
+  content.site.about.trainers.push({name: 'Новый тренер', title: 'Должность', image: ''});
+  renderSite();
+}
+function removeTrainer(i) { content.site.about.trainers.splice(i, 1); renderSite(); }
+
+function uploadTrainerImage(index, input) {
+  var file = input.files[0];
+  if (!file) return;
+  var label = input.nextElementSibling;
+  var pathSpan = label.nextElementSibling;
+  label.textContent = 'Загрузка...';
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var dataUrl = e.target.result;
+    var filename = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.-]/g, '_').toLowerCase();
+    fetch(API + '/admin/upload', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({password: password, filename: filename, data: dataUrl, folder: 'trainer'})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success) {
+        content.site.about.trainers[index].image = data.url;
+        label.innerHTML = '<i class="fas fa-upload"></i> Выбрать файл';
+        pathSpan.textContent = data.url;
+        renderSite();
+      } else {
+        label.textContent = 'Ошибка, попробуйте снова';
+      }
+    })
+    .catch(function() {
+      label.textContent = 'Ошибка соединения';
+    });
+  };
+  reader.readAsDataURL(file);
+}
+
+function addAboutFeature() {
+  if (!content.site.about.features) content.site.about.features = [];
+  content.site.about.features.push({icon: 'fas fa-check', title: '', text: ''});
+  renderSite();
+}
+function removeAboutFeature(i) { content.site.about.features.splice(i, 1); renderSite(); }
 
 function addPlan(ci) { content.training.categories[ci].plans.push({id:'new-'+Date.now(),title:'',price:'',perClass:'',popular:false,features:[]}); renderTraining(); }
 function removePlan(ci,pi) { content.training.categories[ci].plans.splice(pi,1); renderTraining(); }
@@ -316,6 +534,8 @@ function saveAll() {
     {path:'public/content/gallery.json', content: JSON.stringify(content.gallery, null, 2)},
     {path:'public/content/reviews.json', content: JSON.stringify(content.reviews, null, 2)},
     {path:'public/content/achievements.json', content: JSON.stringify(content.achievements, null, 2)},
+    {path:'public/content/site.json', content: JSON.stringify(content.site, null, 2)},
+    {path:'public/content/contact.json', content: JSON.stringify(content.contact, null, 2)},
   ];
   fetch(API + '/admin/save', {
     method: 'POST',

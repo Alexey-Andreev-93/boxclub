@@ -152,49 +152,36 @@
       <div class="hero__content">
         <!-- Текстовая часть -->
         <div class="hero__text">
-          <h1 class="hero__title">
-            Стань <span class="hero__accent">чемпионом</span><br>
-            в школе бокса<br>
-            <span class="hero__name">Абдуллы Рамазанова</span>
-          </h1>
+          <h1 class="hero__title" x-html="$store.site.hero.titleHtml || 'Стань <span class=\'hero__accent\'>чемпионом</span><br> в школе бокса <span class=\'hero__name\'>Абдуллы Рамазанова</span>'"></h1>
 
-          <p class="hero__description">
-            Профессиональные тренировки в Новом Девяткино.
-            Развивай силу, выносливость и уверенность в себе.
-          </p>
+          <p class="hero__description" x-text="$store.site.hero.description || 'Профессиональные тренировки в Новом Девяткино. Развивай силу, выносливость и уверенность в себе.'"></p>
 
           <!-- Преимущества -->
           <div class="hero__features">
-            <div class="hero__feature">
-              <div class="hero__feature-icon">
-                <i class="fas fa-fist-raised"></i>
+            <template x-for="feature in ($store.site.hero.features || [])" :key="feature.text">
+              <div class="hero__feature">
+                <div class="hero__feature-icon">
+                  <i :class="feature.icon || 'fas fa-check'"></i>
+                </div>
+                <span class="hero__feature-text" x-text="feature.text"></span>
               </div>
-              <span class="hero__feature-text">Профессиональные тренеры</span>
-            </div>
-            <div class="hero__feature">
-              <div class="hero__feature-icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <span class="hero__feature-text">Групповые и индивидуальные занятия</span>
-            </div>
-            <div class="hero__feature">
-              <div class="hero__feature-icon">
-                <i class="fas fa-bullseye"></i>
-              </div>
-              <span class="hero__feature-text">Первая тренировка бесплатно</span>
-            </div>
+            </template>
           </div>
 
           <!-- Кнопки -->
           <div class="hero__buttons">
-            <a href="#contact" class="btn btn--primary shimmer">
-              <i class="fas fa-bullseye btn__icon"></i>
-              Записаться на тренировку
-            </a>
-            <a href="#reviews" class="btn btn--secondary">
-              <i class="fas fa-info-circle btn__icon"></i>
-              Узнать больше
-            </a>
+            <template x-if="$store.site.hero.primaryButton">
+              <a :href="$store.site.hero.primaryButton.link || '#contact'" class="btn btn--primary shimmer">
+                <i :class="($store.site.hero.primaryButton.icon || 'fas fa-bullseye') + ' btn__icon'"></i>
+                <span x-text="$store.site.hero.primaryButton.text || 'Записаться на тренировку'"></span>
+              </a>
+            </template>
+            <template x-if="$store.site.hero.secondaryButton">
+              <a :href="$store.site.hero.secondaryButton.link || '#reviews'" class="btn btn--secondary">
+                <i :class="($store.site.hero.secondaryButton.icon || 'fas fa-info-circle') + ' btn__icon'"></i>
+                <span x-text="$store.site.hero.secondaryButton.text || 'Узнать больше'"></span>
+              </a>
+            </template>
           </div>
         </div>
 
@@ -220,15 +207,15 @@
           <div class="hero__stats">
             <div class="hero__stat">
               <div class="hero__stat-number" x-text="stats.students">0</div>
-              <div class="hero__stat-label">учеников</div>
+              <div class="hero__stat-label" x-text="$store.site.hero.stats?.studentsLabel || 'учеников'"></div>
             </div>
             <div class="hero__stat">
               <div class="hero__stat-number" x-text="stats.experience">0</div>
-              <div class="hero__stat-label">лет опыта</div>
+              <div class="hero__stat-label" x-text="$store.site.hero.stats?.experienceLabel || 'лет опыта'"></div>
             </div>
             <div class="hero__stat">
               <div class="hero__stat-number" x-text="stats.price">0 ₽</div>
-              <div class="hero__stat-label">первая тренировка</div>
+              <div class="hero__stat-label" x-text="$store.site.hero.stats?.priceLabel || 'первая тренировка'"></div>
             </div>
           </div>
         </div>
@@ -259,98 +246,60 @@
   </section>
 
   <!-- Секция О школе -->
-  <section id="about" class="section about">
+  <section id="about" class="section about" x-data="aboutGallery">
     <div class="container">
-      <h2 class="section__title">О нашей школе</h2>
+      <h2 class="section__title" x-text="$store.site.about?.title || 'О нашей школе'"></h2>
 
       <div class="about__content">
         <!-- Горизонтальный аккордеон -->
-        <div class="about__gallery" x-data="aboutGallery">
+        <div class="about__gallery">
           <div class="trainers-accordion">
-            <!-- Тренер 1 -->
-            <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 1 }" @click="toggleTrainer(1)"
-              @mouseenter="activateTrainer(1)" style="background-image: url('images/trainer/trainer-1.webp')">
-              <div class="trainer-card__content">
-                <div class="trainer-card__info" data-name="Абдулла Рамазанов">
-                  <h3 class="trainer-card__name">Абдулла Рамазанов</h3>
-                  <p class="trainer-card__title">Главный тренер</p>
+            <template x-for="(trainer, index) in ($store.site.about?.trainers || [])" :key="index">
+              <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === index }"
+                @click="toggleTrainer(index)" @mouseenter="activateTrainer(index)"
+                :style="'background-image: url(' + trainer.image + ')'">
+                <div class="trainer-card__content">
+                  <div class="trainer-card__info" :data-name="trainer.name">
+                    <h3 class="trainer-card__name" x-text="trainer.name"></h3>
+                    <p class="trainer-card__title" x-text="trainer.title"></p>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            <!-- Тренер 2 -->
-            <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 2 }" @click="toggleTrainer(2)"
-              @mouseenter="activateTrainer(2)" style="background-image: url('images/trainer/trainer-2.webp')">
-              <div class="trainer-card__content">
-                <div class="trainer-card__info" data-name="Мария Иванова">
-                  <h3 class="trainer-card__name">Мария Иванова</h3>
-                  <p class="trainer-card__title">Тренер по ОФП</p>
-                </div>
-              </div>
-            </div>
-
-            <!-- Тренер 3 -->
-            <div class="trainer-card" :class="{ 'trainer-card--active': activeTrainer === 3 }" @click="toggleTrainer(3)"
-              @mouseenter="activateTrainer(3)" style="background-image: url('images/trainer/trainer-3.webp')">
-              <div class="trainer-card__content">
-                <div class="trainer-card__info" data-name="Дмитрий Петров">
-                  <h3 class="trainer-card__name">Дмитрий Петров</h3>
-                  <p class="trainer-card__title">Тренер по спаррингу</p>
-                </div>
-              </div>
-            </div>
+            </template>
           </div>
         </div>
 
         <!-- Текстовая часть -->
         <div class="about__text">
           <div class="about__description">
-            <p>Школа бокса Абдуллы Рамазанова — это профессиональная тренировочная база в Новом Девяткино, где мы
-              воспитываем чемпионов и помогаем каждому ученику раскрыть свой потенциал.</p>
-
-            <p>Наша философия — индивидуальный подход к каждому спортсмену, независимо от возраста и уровня подготовки.
-              Мы создаем атмосферу, где бокс становится не просто спортом, а образом жизни.</p>
+            <template x-for="(paragraph, idx) in ($store.site.about?.description || [])" :key="idx">
+              <p x-text="paragraph"></p>
+            </template>
           </div>
 
           <!-- Преимущества -->
           <div class="about__features">
-            <div class="about__feature">
-              <div class="about__feature-icon">
-                <i class="fas fa-shield-alt"></i>
+            <template x-for="(feature, idx) in ($store.site.about?.features || [])" :key="idx">
+              <div class="about__feature">
+                <div class="about__feature-icon">
+                  <i :class="feature.icon || 'fas fa-check'"></i>
+                </div>
+                <div class="about__feature-content">
+                  <h3 x-text="feature.title"></h3>
+                  <p x-text="feature.text"></p>
+                </div>
               </div>
-              <div class="about__feature-content">
-                <h3>Безопасность</h3>
-                <p>Современное оборудование и профессиональный контроль на каждой тренировке</p>
-              </div>
-            </div>
-
-            <div class="about__feature">
-              <div class="about__feature-icon">
-                <i class="fas fa-chart-line"></i>
-              </div>
-              <div class="about__feature-content">
-                <h3>Прогресс</h3>
-                <p>Постепенное увеличение нагрузок и регулярный мониторинг результатов</p>
-              </div>
-            </div>
-
-            <div class="about__feature">
-              <div class="about__feature-icon">
-                <i class="fas fa-users"></i>
-              </div>
-              <div class="about__feature-content">
-                <h3>Комьюнити</h3>
-                <p>Дружеская атмосфера и поддержка единомышленников</p>
-              </div>
-            </div>
+            </template>
           </div>
 
           <!-- Кнопка -->
           <div class="about__actions">
-            <a href="#contact" class="btn btn--primary shimmer">
-              <i class="fas fa-bullseye btn__icon"></i>
-              Начать тренировки
-            </a>
+            <template x-if="$store.site.about?.cta">
+              <a :href="$store.site.about.cta.link || '#contact'" class="btn btn--primary shimmer">
+                <i :class="($store.site.about.cta.icon || 'fas fa-bullseye') + ' btn__icon'"></i>
+                <span x-text="$store.site.about.cta.text || 'Начать тренировки'"></span>
+              </a>
+            </template>
           </div>
         </div>
       </div>
@@ -429,37 +378,16 @@
               </p>
 
               <div class="modal-schedule__grid">
-                <div class="modal-schedule__column">
-                  <h4>Дети (7–12 лет)</h4>
-                  <ul>
-                    <li><strong>Пн, Ср, Пт</strong> — 17:00–18:00</li>
-                    <li><strong>Сб</strong> — 11:00–12:00</li>
-                  </ul>
-                </div>
-
-                <div class="modal-schedule__column">
-                  <h4>Подростки (13–17 лет)</h4>
-                  <ul>
-                    <li><strong>Пн, Ср, Пт</strong> — 18:00–19:30</li>
-                    <li><strong>Сб</strong> — 12:00–13:30</li>
-                  </ul>
-                </div>
-
-                <div class="modal-schedule__column">
-                  <h4>Взрослые (18+)</h4>
-                  <ul>
-                    <li><strong>Вт, Чт</strong> — 19:30–21:00</li>
-                    <li><strong>Сб</strong> — 13:30–15:00</li>
-                  </ul>
-                </div>
-
-                <div class="modal-schedule__column">
-                  <h4>Индивидуальные тренировки</h4>
-                  <ul>
-                    <li>По предварительной записи</li>
-                    <li>Утренние и дневные слоты</li>
-                  </ul>
-                </div>
+                <template x-for="group in ($store.contact.schedule || [])" :key="group.group">
+                  <div class="modal-schedule__column">
+                    <h4 x-text="group.group"></h4>
+                    <ul>
+                      <template x-for="day in group.days" :key="day.days">
+                        <li><strong x-text="day.days"></strong><span x-text="' — ' + day.time"></span></li>
+                      </template>
+                    </ul>
+                  </div>
+                </template>
               </div>
 
               <div class="modal-schedule__actions">
@@ -620,7 +548,7 @@
   </section>
 
   <!-- Секция Контакты -->
-  <section id="contact" class="section contact" itemscope itemtype="https://schema.org/SportsActivityLocation">
+  <section id="contact" class="section contact" x-data="contactInfo" itemscope itemtype="https://schema.org/SportsActivityLocation">
     <div class="container">
       <h2 class="section__title">Контакты</h2>
       <p class="contact__subtitle">Выберите удобный способ связи</p>
@@ -635,10 +563,10 @@
             </div>
             <div class="contact__method-content">
               <h3>Позвонить</h3>
-              <a href="tel:+79671789898" class="contact__phone">+7 (967) 178-98-98</a>
+              <a :href="'tel:' + ($store.contact.phoneRaw || '+79671789898')" class="contact__phone" x-text="$store.contact.phone || '+7 (967) 178-98-98'"></a>
               <p>Прямой звонок тренеру</p>
             </div>
-            <a href="tel:+79671789898" class="btn btn--primary btn--small contact__action-btn">
+            <a :href="'tel:' + ($store.contact.phoneRaw || '+79671789898')" class="btn btn--primary btn--small contact__action-btn">
               <i class="fas fa-phone"></i>
               Позвонить
             </a>
@@ -654,8 +582,7 @@
               <p>Быстрая связь через WhatsApp</p>
               <span class="contact__status">Онлайн</span>
             </div>
-            <a href="https://wa.me/79671789898?text=Здравствуйте! Хочу записаться на пробную тренировку по боксу"
-              class="btn btn--small contact__action-btn contact__action-btn--whatsapp" target="_blank" rel="noopener">
+            <a :href="$store.contact.whatsapp?.url || 'https://wa.me/79671789898'" class="btn btn--small contact__action-btn contact__action-btn--whatsapp" target="_blank" rel="noopener">
               <i class="fab fa-whatsapp"></i>
               Написать
             </a>
@@ -671,7 +598,7 @@
               <p>Связь через Telegram</p>
               <span class="contact__status">Онлайн</span>
             </div>
-            <a href="https://t.me/scboxingnov" class="btn btn--small contact__action-btn contact__action-btn--telegram"
+            <a :href="$store.contact.telegram || 'https://t.me/scboxingnov'" class="btn btn--small contact__action-btn contact__action-btn--telegram"
               target="_blank" rel="noopener">
               <i class="fab fa-telegram"></i>
               Написать
@@ -688,7 +615,7 @@
               <p>Группа и сообщения ВК</p>
               <span class="contact__status">Онлайн</span>
             </div>
-            <a href="https://vk.com/scboxing" class="btn btn--small contact__action-btn contact__action-btn--vk"
+            <a :href="$store.contact.vk || 'https://vk.com/scboxing'" class="btn btn--small contact__action-btn contact__action-btn--vk"
               target="_blank" rel="noopener">
               <i class="fab fa-vk"></i>
               Написать
@@ -699,7 +626,7 @@
         <!-- Правая колонка - Информация -->
         <div class="contact__info">
           <div class="info-card">
-            <h3>Школа бокса в Новом Девяткино</h3>
+            <h3 x-text="$store.contact.address?.region || 'Школа бокса в Новом Девяткино'"></h3>
 
             <div class="info-item">
               <div class="info-icon">
@@ -707,7 +634,7 @@
               </div>
               <div class="info-content">
                 <strong>Адрес:</strong>
-                <p>Новое Девяткино, Ленинградская область</p>
+                <p x-text="$store.contact.address?.region || 'Новое Девяткино, Ленинградская область'"></p>
               </div>
             </div>
 
@@ -717,8 +644,8 @@
               </div>
               <div class="info-content">
                 <strong>Время работы:</strong>
-                <p>Пн-Пт: 08:00-22:00</p>
-                <p>Сб-Вс: 09:00-20:00</p>
+                <p x-text="$store.contact.hours?.weekdays || 'Пн-Пт: 08:00-22:00'"></p>
+                <p x-text="$store.contact.hours?.weekends || 'Сб-Вс: 09:00-20:00'"></p>
               </div>
             </div>
 
@@ -736,17 +663,17 @@
             <div class="quick-actions">
               <h4>Быстрая запись:</h4>
               <div class="quick-buttons">
-                <a href="https://wa.me/79671789898?text=Хочу записаться на пробную тренировку"
+                <a :href="$store.contact.whatsapp?.url || 'https://wa.me/79671789898'"
                   class="btn btn--small quick-btn quick-btn--whatsapp" target="_blank" rel="noopener">
                   <i class="fab fa-whatsapp"></i>
                   WhatsApp
                 </a>
-                <a href="https://t.me/scboxingnov" class="btn btn--small quick-btn quick-btn--telegram" target="_blank"
+                <a :href="$store.contact.telegram || 'https://t.me/scboxingnov'" class="btn btn--small quick-btn quick-btn--telegram" target="_blank"
                   rel="noopener">
                   <i class="fab fa-telegram"></i>
                   Telegram
                 </a>
-                <a href="https://vk.com/scboxing" class="btn btn--small quick-btn quick-btn--vk" target="_blank"
+                <a :href="$store.contact.vk || 'https://vk.com/scboxing'" class="btn btn--small quick-btn quick-btn--vk" target="_blank"
                   rel="noopener">
                   <i class="fab fa-vk"></i>
                   VK
@@ -759,30 +686,16 @@
 
       <!-- Компактная версия преимуществ -->
       <div class="contact__benefits">
-        <h3>💬 Почему лучше писать в мессенджеры?</h3>
+        <h3 x-text="$store.contact.benefitsTitle || '💬 Почему лучше писать в мессенджеры?'"></h3>
         <div class="benefits-list">
-          <div class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Ответ в течение 15 минут</span>
-          </div>
-          <div class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Можно отправить фото/видео</span>
-          </div>
-          <div class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>История переписки сохраняется</span>
-          </div>
-          <div class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Удобно с мобильного телефона</span>
-          </div>
-          <div class="benefit-item">
-            <i class="fas fa-check-circle"></i>
-            <span>Без спама и рассылок</span>
-          </div>
+          <template x-for="benefit in ($store.contact.benefits || [])" :key="benefit">
+            <div class="benefit-item">
+              <i class="fas fa-check-circle"></i>
+              <span x-text="benefit"></span>
+            </div>
+          </template>
         </div>
-        <p class="benefits-note">Просто выберите WhatsApp, Telegram или VK - и пишите как в обычном чате!</p>
+        <p class="benefits-note" x-text="$store.contact.benefitsNote || 'Просто выберите WhatsApp, Telegram или VK - и пишите как в обычном чате!'"></p>
       </div>
 
       <!-- Карта -->
@@ -791,7 +704,7 @@
         <div class="map-container">
           <!-- Статичная карта Яндекс -->
           <div class="map-iframe-container" style="position:relative;overflow:hidden;">
-            <a href="https://yandex.ru/maps/org/shkola_boksa_abdully_ramazanova/3987126645/?utm_medium=mapframe&utm_source=maps"
+            <a :href="'https://yandex.ru/maps/org/shkola_boksa_abdully_ramazanova/' + ($store.contact.map?.orgId || '3987126645') + '/?utm_medium=mapframe&utm_source=maps'"
               style="color:#eee;font-size:12px;position:absolute;top:0px;">Школа бокса Абдуллы Рамазанова
             </a>
 
@@ -801,7 +714,7 @@
             </a>
 
             <iframe
-              src="https://yandex.ru/map-widget/v1/?ll=30.478373%2C60.059055&mode=search&oid=3987126645&ol=biz&z=19.15"
+              :src="'https://yandex.ru/map-widget/v1/?ll=' + ($store.contact.map?.ll || '30.478373%2C60.059055') + '&mode=search&oid=' + ($store.contact.map?.orgId || '3987126645') + '&ol=biz&z=19.15'"
               width="100%" height="100%" frameborder="1" allowfullscreen="true" style="position:relative;">
             </iframe>
           </div>
@@ -814,61 +727,43 @@
               </div>
               <div class="address-details">
                 <h4>Адрес зала</h4>
-                <p class="address-street">ул. Славы, д. 1</p>
-                <p class="address-location">Новое Девяткино, Ленинградская область</p>
+                <p class="address-street" x-text="$store.contact.address?.street || 'ул. Славы, д. 1'"></p>
+                <p class="address-location" x-text="$store.contact.address?.region || 'Новое Девяткино, Ленинградская область'"></p>
               </div>
             </div>
 
             <div class="transport-details">
               <h4>Как добраться</h4>
 
-              <div class="transport-option">
-                <div class="transport-icon">
-                  <i class="fas fa-train"></i>
+              <template x-for="(option, idx) in ($store.contact.transport || [])" :key="idx">
+                <div class="transport-option">
+                  <div class="transport-icon">
+                    <i :class="option.icon || 'fas fa-chevron-right'"></i>
+                  </div>
+                  <div class="transport-info">
+                    <strong x-text="option.title"></strong>
+                    <p x-text="option.text"></p>
+                  </div>
                 </div>
-                <div class="transport-info">
-                  <strong>Метро "Девяткино"</strong>
-                  <p>15-20 минут пешком от станции</p>
-                </div>
-              </div>
-
-              <div class="transport-option">
-                <div class="transport-icon">
-                  <i class="fas fa-bus"></i>
-                </div>
-                <div class="transport-info">
-                  <strong>Автобусы</strong>
-                  <p>№ 205, 562 до остановки "Улица Славы"</p>
-                </div>
-              </div>
-
-              <div class="transport-option">
-                <div class="transport-icon">
-                  <i class="fas fa-car"></i>
-                </div>
-                <div class="transport-info">
-                  <strong>На автомобиле</strong>
-                  <p>Бесплатная парковка у входа</p>
-                </div>
-              </div>
+              </template>
             </div>
 
             <div class="map-actions">
               <!-- Основная кнопка — как была -->
-              <a href="https://yandex.ru/maps/org/shkola_boksa_abdully_ramazanova/3987126645/?ll=30.478374%2C60.059055&z=16"
+              <a :href="'https://yandex.ru/maps/org/shkola_boksa_abdully_ramazanova/' + ($store.contact.map?.orgId || '3987126645') + '/?ll=' + ($store.contact.map?.ll || '30.478374%2C60.059055') + '&z=16'"
                 class="btn btn--primary" target="_blank" rel="noopener">
                 <i class="fas fa-map-marked-alt"></i>
                 Открыть в Яндекс.Картах
               </a>
 
               <div style="display: flex; gap: 1rem; margin-top: 1rem;">
-                <a href="yandexmaps://build_route/from=here/to=60.059055,30.478374" class="btn btn--outline btn--small"
+                <a :href="'yandexmaps://build_route/from=here/to=' + ($store.contact.map?.coords || '60.059055,30.478374')" class="btn btn--outline btn--small"
                   style="flex: 1; min-width: 150px;" target="_blank" rel="noopener">
                   <i class="fab fa-yandex"></i>
                   Проложить маршрут
                 </a>
 
-                <a href="https://www.google.com/maps/dir/?api=1&destination=60.059055,30.478374"
+                <a :href="'https://www.google.com/maps/dir/?api=1&destination=' + ($store.contact.map?.coords || '60.059055,30.478374')"
                   class="btn btn--outline btn--small" style="flex: 1; min-width: 150px;" target="_blank" rel="noopener">
                   <i class="fab fa-google"></i>
                   Проложить маршрут
@@ -882,7 +777,7 @@
   </section>
 
   <!-- Футер -->
-  <footer class="footer">
+  <footer class="footer" x-data="contactInfo">
     <div class="container">
       <!-- Основная часть футера -->
       <div class="footer__main">
@@ -891,22 +786,19 @@
           <div class="footer__logo">
             <i class="fas fa-fist-raised footer__logo-icon"></i>
             <div class="footer__logo-text">
-              <span class="footer__logo-title">Школа Бокса</span>
-              <span class="footer__logo-subtitle">Абдулла Рамазанов</span>
+              <span class="footer__logo-title" x-text="$store.contact.footer?.logoTitle || 'Школа Бокса'"></span>
+              <span class="footer__logo-subtitle" x-text="$store.contact.footer?.logoSubtitle || 'Абдулла Рамазанов'"></span>
             </div>
           </div>
-          <p class="footer__description">
-            Профессиональные тренировки по боксу в Новом Девяткино.
-            Развиваем чемпионов с 2018 года.
-          </p>
+          <p class="footer__description" x-text="$store.contact.footer?.description || 'Профессиональные тренировки по боксу в Новом Девяткино. Развиваем чемпионов с 2018 года.'"></p>
           <div class="footer__social">
-            <a href="https://wa.me/79671789898" class="footer__social-link" target="_blank" rel="noopener">
+            <a :href="$store.contact.whatsapp?.url || 'https://wa.me/79671789898'" class="footer__social-link" target="_blank" rel="noopener">
               <i class="fab fa-whatsapp"></i>
             </a>
-            <a href="https://t.me/scboxingnov" class="footer__social-link" target="_blank" rel="noopener">
+            <a :href="$store.contact.telegram || 'https://t.me/scboxingnov'" class="footer__social-link" target="_blank" rel="noopener">
               <i class="fab fa-telegram"></i>
             </a>
-            <a href="https://vk.com/scboxing" class="footer__social-link" target="_blank" rel="noopener">
+            <a :href="$store.contact.vk || 'https://vk.com/scboxing'" class="footer__social-link" target="_blank" rel="noopener">
               <i class="fab fa-vk"></i>
             </a>
           </div>
@@ -929,26 +821,26 @@
           <h3>Контакты</h3>
           <div class="footer__contact-item">
             <i class="fas fa-phone"></i>
-            <a href="tel:+79671789898">+7 (967) 178-98-98</a>
+            <a :href="'tel:' + ($store.contact.phoneRaw || '+79671789898')" x-text="$store.contact.phone || '+7 (967) 178-98-98'"></a>
           </div>
           <div class="footer__contact-item">
             <i class="fas fa-map-marker-alt"></i>
-            <span>Новое Девяткино, ул. Славы, д. 1</span>
+            <span x-text="$store.contact.address?.full || 'Новое Девяткино, ул. Славы, д. 1'"></span>
           </div>
           <div class="footer__contact-item">
             <i class="fas fa-clock"></i>
-            <span>Пн-Пт: 08:00-22:00<br>Сб-Вс: 09:00-20:00</span>
+            <span><span x-text="$store.contact.hours?.weekdays || 'Пн-Пт: 08:00-22:00'"></span><br><span x-text="$store.contact.hours?.weekends || 'Сб-Вс: 09:00-20:00'"></span></span>
           </div>
         </div>
 
         <!-- Быстрая запись -->
         <div class="footer__cta">
-          <h3>Первая тренировка</h3>
-          <p>Бесплатно для новых учеников</p>
-          <a href="https://wa.me/79671789898?text=Хочу записаться на пробную тренировку"
+          <h3 x-text="$store.contact.footer?.cta?.text || 'Первая тренировка'"></h3>
+          <p x-text="$store.contact.footer?.cta?.subtext || 'Бесплатно для новых учеников'"></p>
+          <a :href="$store.contact.footer?.cta?.buttonLink || 'https://wa.me/79671789898?text=Хочу записаться на пробную тренировку'"
             class="btn btn--primary btn--small" target="_blank" rel="noopener">
             <i class="fab fa-whatsapp"></i>
-            Записаться
+            <span x-text="$store.contact.footer?.cta?.buttonText || 'Записаться'"></span>
           </a>
         </div>
       </div>
