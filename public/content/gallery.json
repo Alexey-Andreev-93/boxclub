@@ -1,17 +1,6 @@
 {
   "items": [
     {
-      "id": 4,
-      "image": "/images/trainer/trainer-1.webp",
-      "title": "Работа в парах",
-      "description": "Отработка защитных техник и контратак в спаррингах",
-      "type": "training",
-      "badge": "Спарринг",
-      "date": "20.01.2024",
-      "category": "Тренировочный процесс",
-      "featured": false
-    },
-    {
       "id": 1,
       "image": "/images/gallery/gallery-1.webp",
       "title": "Профессиональная тренировка",
