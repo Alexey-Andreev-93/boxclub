@@ -56,13 +56,13 @@
       "featured": false
     },
     {
-      "id": 6,
-      "image": "/images/gallery/team-1.webp",
-      "title": "Силовая подготовка",
-      "description": "Развитие физической мощи для мощных нокаутирующих ударов",
+      "id": 8,
+      "image": "/images/hero/achievement.webp",
+      "title": "Техника работы ног",
+      "description": "Освоение правильной стойки и перемещений по рингу",
       "type": "training",
-      "badge": "ОФП",
-      "date": "25.01.2024",
+      "badge": "Техника",
+      "date": "30.01.2024",
       "category": "Тренировочный процесс",
       "featured": false
     },
@@ -78,13 +78,13 @@
       "featured": false
     },
     {
-      "id": 8,
-      "image": "/images/hero/achievement.webp",
-      "title": "Техника работы ног",
-      "description": "Освоение правильной стойки и перемещений по рингу",
+      "id": 6,
+      "image": "/images/gallery/team-1.webp",
+      "title": "Силовая подготовка",
+      "description": "Развитие физической мощи для мощных нокаутирующих ударов",
       "type": "training",
-      "badge": "Техника",
-      "date": "30.01.2024",
+      "badge": "ОФП",
+      "date": "25.01.2024",
       "category": "Тренировочный процесс",
       "featured": false
     }
