@@ -59,17 +59,17 @@
       {
         "name": "Абдулла Рамазанов",
         "title": "Главный тренер",
-        "image": "images/trainer/trainer-1.webp"
+        "image": "/images/trainer/trainer-1.webp"
       },
       {
         "name": "Мария Иванова",
         "title": "Тренер по ОФП",
-        "image": "images/trainer/trainer-2.webp"
+        "image": "/images/trainer/trainer-2.webp"
       },
       {
         "name": "Дмитрий Петров",
         "title": "Тренер по спаррингу",
-        "image": "images/trainer/trainer-3.webp"
+        "image": "/images/trainer/trainer-3.webp"
       }
     ],
     "cta": {
