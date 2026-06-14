@@ -59,9 +59,6 @@ oauth-proxy/            — Yandex Cloud Function for admin API
 
 ## Admin panel (production)
 
-**URL**: `https://boxclub.website.yandexcloud.net/admin/`
-**Password**: `boxclub2024` (SHA256 hash in function env `ADMIN_PASS_HASH`)
-
 The admin panel:
 1. Shows password form
 2. On correct password, loads content from `public/content/*.json`
