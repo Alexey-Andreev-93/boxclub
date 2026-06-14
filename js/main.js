@@ -17,7 +17,7 @@ Alpine.data('contactInfo', contactInfo);
 
 const BASE = import.meta.env.BASE_URL;
 
-Alpine.store('site', { hero: {}, about: {}, seo: {} });
+Alpine.store('site', { hero: {}, about: {} });
 Alpine.store('contact', {});
 
 Promise.all([

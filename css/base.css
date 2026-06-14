@@ -81,14 +81,6 @@ h1, h2, h3, h4, h5, h6 {
     background: var(--primary);
 }
 
-.text--red {
-    color: var(--primary);
-}
-
-.text--accent {
-    color: var(--accent);
-}
-
 /* ========== АНИМАЦИИ ========== */
 @keyframes achievement-float {
     0%, 100% {
@@ -102,13 +94,6 @@ h1, h2, h3, h4, h5, h6 {
     }
     75% {
         transform: translateY(-15px) rotate(2deg) scale(1.02);
-    }
-}
-
-@keyframes ripple-animation {
-    to {
-        transform: scale(4);
-        opacity: 0;
     }
 }
 

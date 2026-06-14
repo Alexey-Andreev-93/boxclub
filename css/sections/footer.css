@@ -208,11 +208,6 @@
   font-size: 0.9rem;
 }
 
-.footer__developer {
-  color: rgba(255, 255, 255, 0.6);
-  font-size: 0.9rem;
-}
-
 /* Адаптивность */
 @media (max-width: 1024px) {
   .footer__main {

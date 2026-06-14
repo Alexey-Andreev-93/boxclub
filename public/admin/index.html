@@ -368,7 +368,7 @@ function renderSite() {
     h += '<div class="field"><label>Должность</label><input value="' + esc(t.title) + '" onchange="setSite(\'about.trainers.' + i + '.title\',this.value)"></div>';
     h += '<div class="field"><label>Фото</label><div class="img-upload-wrap">';
     if (t.image) h += '<img class="img-preview" src="' + esc(t.image) + '">';
-    h += '<input type="file" accept="image/*" id="trainer-file-' + i + '" onchange="uploadTrainerImage(' + i + ',this)">';
+    h += '<input type="file" accept="image/*" id="trainer-file-' + i + '" onchange="uploadImage(' + i + ',\'trainer\',this,\'image\')">';
     h += '<label class="img-label" for="trainer-file-' + i + '"><i class="fas fa-upload"></i> Выбрать файл</label>';
     h += '<span class="img-path">' + esc(t.image || 'нет фото') + '</span></div></div>';
     h += '</div>';
@@ -518,19 +518,16 @@ function setGallery(i,k,v) { content.gallery.items[i][k]=v; }
 function setReview(i,k,v) { content.reviews.items[i][k]=v; }
 function setAchievement(i,k,v) { content.achievements.items[i][k]=v; }
 
-function setSite(path, v) {
+function deepSet(obj, path, v) {
   var parts = path.split('.');
-  var obj = content.site;
   for (var p = 0; p < parts.length - 1; p++) {
     if (!obj[parts[p]]) obj[parts[p]] = {};
     obj = obj[parts[p]];
   }
   obj[parts[parts.length - 1]] = v;
 }
-
-function getSite(path, def) {
+function deepGet(obj, path, def) {
   var parts = path.split('.');
-  var obj = content.site;
   for (var p = 0; p < parts.length; p++) {
     if (!obj || typeof obj !== 'object') return def;
     obj = obj[parts[p]];
@@ -538,25 +535,10 @@ function getSite(path, def) {
   return obj !== undefined ? obj : def;
 }
 
-function setContact(path, v) {
-  var parts = path.split('.');
-  var obj = content.contact;
-  for (var p = 0; p < parts.length - 1; p++) {
-    if (!obj[parts[p]]) obj[parts[p]] = {};
-    obj = obj[parts[p]];
-  }
-  obj[parts[parts.length - 1]] = v;
-}
-
-function getContact(path, def) {
-  var parts = path.split('.');
-  var obj = content.contact;
-  for (var p = 0; p < parts.length; p++) {
-    if (!obj || typeof obj !== 'object') return def;
-    obj = obj[parts[p]];
-  }
-  return obj !== undefined ? obj : def;
-}
+function setSite(path, v) { deepSet(content.site, path, v); }
+function getSite(path, def) { return deepGet(content.site, path, def); }
+function setContact(path, v) { deepSet(content.contact, path, v); }
+function getContact(path, def) { return deepGet(content.contact, path, def); }
 
 function addTrainer() {
   if (!content.site.about.trainers) content.site.about.trainers = [];
@@ -564,39 +546,6 @@ function addTrainer() {
   renderSite();
 }
 function removeTrainer(i) { if (confirm('Удалить тренера?')) { content.site.about.trainers.splice(i, 1); renderSite(); } }
-
-function uploadTrainerImage(index, input) {
-  var file = input.files[0];
-  if (!file) return;
-  var label = input.nextElementSibling;
-  var pathSpan = label.nextElementSibling;
-  label.textContent = 'Загрузка...';
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var dataUrl = e.target.result;
-    var filename = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.-]/g, '_').toLowerCase();
-    fetch(API + '/admin/upload', {
-      method: 'POST',
-      headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({password: password, filename: filename, data: dataUrl, folder: 'trainer'})
-    })
-    .then(function(r) { return r.json(); })
-    .then(function(data) {
-      if (data.success) {
-        content.site.about.trainers[index].image = data.url;
-        label.innerHTML = '<i class="fas fa-upload"></i> Выбрать файл';
-        pathSpan.textContent = data.url;
-        renderSite();
-      } else {
-        label.textContent = 'Ошибка, попробуйте снова';
-      }
-    })
-    .catch(function() {
-      label.textContent = 'Ошибка соединения';
-    });
-  };
-  reader.readAsDataURL(file);
-}
 
 function addAboutFeature() {
   if (!content.site.about.features) content.site.about.features = [];
@@ -616,8 +565,14 @@ function removeReview(i) { if (confirm('Удалить отзыв?')) { content.
 function addAchievement() { content.achievements.items.push({image:'',title:'',positionClass:'hero__achievement--new'}); renderAchievements(); }
 function removeAchievement(i) { if (confirm('Удалить достижение?')) { content.achievements.items.splice(i,1); renderAchievements(); } }
 
-function uploadImage(index, folder, input, field) {
+function uploadImage(index, folder, input, field, renderFn) {
   field = field || 'image';
+  if (!renderFn) {
+    if (folder === 'gallery') renderFn = renderGallery;
+    else if (folder === 'reviews') renderFn = renderReviews;
+    else if (folder === 'hero') renderFn = renderAchievements;
+    else if (folder === 'trainer') renderFn = renderSite;
+  }
   var file = input.files[0];
   if (!file) return;
   var label = input.nextElementSibling;
@@ -636,15 +591,13 @@ function uploadImage(index, folder, input, field) {
     .then(function(r) { return r.json(); })
     .then(function(data) {
       if (data.success) {
-        if (folder === 'gallery') { content.gallery.items[index][field] = data.url; }
-        else if (folder === 'reviews') { content.reviews.items[index][field] = data.url; }
-        else if (folder === 'hero') { content.achievements.items[index][field] = data.url; }
+        if (folder === 'gallery') content.gallery.items[index][field] = data.url;
+        else if (folder === 'reviews') content.reviews.items[index][field] = data.url;
+        else if (folder === 'hero') content.achievements.items[index][field] = data.url;
+        else if (folder === 'trainer') content.site.about.trainers[index][field] = data.url;
         label.innerHTML = '<i class="fas fa-upload"></i> Выбрать файл';
         pathSpan.textContent = data.url;
-        // Refresh section to show preview
-        if (folder === 'gallery') renderGallery();
-        else if (folder === 'reviews') renderReviews();
-        else if (folder === 'hero') renderAchievements();
+        if (renderFn) renderFn();
       } else {
         label.textContent = 'Ошибка, попробуйте снова';
       }

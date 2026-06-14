@@ -93,21 +93,6 @@
     box-shadow: 0 8px 25px rgba(209, 0, 0, 0.5);
 }
 
-/* Карточки (базовые стили) */
-.card {
-    background: var(--white);
-    border-radius: var(--border-radius);
-    box-shadow: var(--shadow);
-    transition: var(--transition);
-    border: 1px solid rgba(0, 0, 0, 0.05);
-}
-
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
-}
-
-/* Модальное окно (упрощенное) */
 /* ========== МОДАЛЬНОЕ ОКНО ========== */
 .modal {
     position: fixed;
@@ -140,14 +125,6 @@
     background: transparent;
     box-shadow: none;
     padding: 0;
-}
-
-.modal--small .modal__content {
-    max-width: 400px;
-}
-
-.modal--large .modal__content {
-    max-width: 800px;
 }
 
 /* Модалка расписания */
@@ -501,32 +478,6 @@
   }
 }
 
-/* Утилитарные классы */
-.text-center { text-align: center; }
-.text-left { text-align: left; }
-.text-right { text-align: right; }
-
-.mb-1 { margin-bottom: 1rem; }
-.mb-2 { margin-bottom: 2rem; }
-.mt-1 { margin-top: 1rem; }
-.mt-2 { margin-top: 2rem; }
-
-.flex { display: flex; }
-.flex-center { 
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.flex-between {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.grid {
-    display: grid;
-    gap: 1.5rem;
-}
 
 /* Адаптивность */
 @media (max-width: 768px) {
