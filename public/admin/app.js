@@ -478,7 +478,10 @@ function uploadImage(index, folder, input, field, renderFn) {
       headers: {'Content-Type': 'application/json'},
       body: JSON.stringify({token: token, filename: filename, data: dataUrl, folder: folder})
     })
-    .then(function(r) { return r.json(); })
+    .then(function(r) {
+      if (!r.ok) return r.json().then(function(e) { throw new Error(e.error || r.statusText); });
+      return r.json();
+    })
     .then(function(data) {
       if (data.success) {
         if (folder === 'gallery') content.gallery.items[index][field] = data.url;
@@ -490,11 +493,11 @@ function uploadImage(index, folder, input, field, renderFn) {
         pathSpan.textContent = data.url;
         if (renderFn) renderFn();
       } else {
-        label.textContent = 'Ошибка, попробуйте снова';
+        label.textContent = data.error || 'Ошибка, попробуйте снова';
       }
     })
-    .catch(function() {
-      label.textContent = 'Ошибка соединения';
+    .catch(function(e) {
+      label.textContent = e.message || 'Ошибка соединения';
     });
   };
   reader.readAsDataURL(file);
