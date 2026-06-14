@@ -465,27 +465,12 @@ function uploadImage(index, folder, input, field, renderFn) {
   }
   let file = input.files[0];
   if (!file) return;
-  let wrap = input.parentElement;
   let label = input.nextElementSibling;
   let pathSpan = label.nextElementSibling;
-
-  let progressEl = document.createElement('span');
-  progressEl.className = 'upload-progress';
-  progressEl.innerHTML = '<span class="progress-track"><span class="progress-fill" style="width:0%"></span></span> <span class="progress-text">0%</span>';
-  label.style.display = 'none';
-  wrap.insertBefore(progressEl, pathSpan);
+  label.textContent = 'Загрузка...';
 
   let reader = new FileReader();
-  reader.onprogress = function(e) {
-    if (e.lengthComputable) {
-      let pct = Math.round(e.loaded / e.total * 100);
-      progressEl.querySelector('.progress-fill').style.width = pct + '%';
-      progressEl.querySelector('.progress-text').textContent = pct + '%';
-    }
-  };
   reader.onload = function(e) {
-    progressEl.querySelector('.progress-fill').style.width = '90%';
-    progressEl.querySelector('.progress-text').textContent = 'Отправка...';
     let dataUrl = e.target.result;
     let filename = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.-]/g, '_').toLowerCase();
     fetch(API + '/admin/upload', {
@@ -501,18 +486,15 @@ function uploadImage(index, folder, input, field, renderFn) {
         else if (folder === 'hero') content.achievements.items[index][field] = data.url;
         else if (folder === 'trainer') content.site.about.trainers[index][field] = data.url;
         dirty = true;
-        progressEl.remove();
-        label.style.display = '';
+        label.innerHTML = '<i class="fas fa-upload"></i> Выбрать файл';
         pathSpan.textContent = data.url;
         if (renderFn) renderFn();
       } else {
-        progressEl.querySelector('.progress-fill').style.background = '#e74c3c';
-        progressEl.querySelector('.progress-text').textContent = 'Ошибка';
+        label.textContent = 'Ошибка, попробуйте снова';
       }
     })
     .catch(function() {
-      progressEl.querySelector('.progress-fill').style.background = '#e74c3c';
-      progressEl.querySelector('.progress-text').textContent = 'Ошибка соединения';
+      label.textContent = 'Ошибка соединения';
     });
   };
   reader.readAsDataURL(file);
