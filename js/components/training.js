@@ -4,15 +4,8 @@ export const trainingPricing = () => ({
   // Состояние модального окна с расписанием
   scheduleModalOpen: false,
 
-  init() {
-  },
-
   setActiveCategory(categoryId) {
-    try {
-      this.activeCategory = categoryId;
-    } catch (error) {
-      console.error("Ошибка при установке активной категории:", error);
-    }
+    this.activeCategory = categoryId;
   },
 
   openScheduleModal() {

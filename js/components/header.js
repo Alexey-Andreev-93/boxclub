@@ -3,7 +3,6 @@ export const header = () => ({
   scrolled: false,
 
   _onClick: null,
-  _onTouch: null,
   _onResize: null,
   _onScroll: null,
 
@@ -15,7 +14,6 @@ export const header = () => ({
 
   init() {
     this._onClick = (e) => this._closeIfOutside(e);
-    this._onTouch = (e) => this._closeIfOutside(e);
 
     this._onResize = () => {
       if (window.innerWidth > 968 && this.menuOpen) {
@@ -35,14 +33,12 @@ export const header = () => ({
     this._onScroll();
 
     document.addEventListener("click", this._onClick);
-    document.addEventListener("touchstart", this._onTouch, { passive: true });
     window.addEventListener("resize", this._onResize);
     window.addEventListener("scroll", this._onScroll, { passive: true });
   },
 
   destroy() {
     document.removeEventListener("click", this._onClick);
-    document.removeEventListener("touchstart", this._onTouch);
     window.removeEventListener("resize", this._onResize);
     window.removeEventListener("scroll", this._onScroll);
   },

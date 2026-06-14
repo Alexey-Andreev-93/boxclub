@@ -28,34 +28,19 @@ export const gallery = () => ({
   },
 
   get totalPages() {
-    try {
-      return Math.ceil(this.filteredItems.length / this.itemsPerPage);
-    } catch (error) {
-      console.error("Ошибка при вычислении общего количества страниц:", error);
-      return 0;
-    }
+    return Math.ceil(this.filteredItems.length / this.itemsPerPage);
   },
 
   get displayedItems() {
-    try {
-      const start = this.currentPage * this.itemsPerPage;
-      const end = start + this.itemsPerPage;
-      return this.filteredItems.slice(start, end);
-    } catch (error) {
-      console.error("Ошибка при получении отображаемых элементов:", error);
-      return [];
-    }
+    const start = this.currentPage * this.itemsPerPage;
+    const end = start + this.itemsPerPage;
+    return this.filteredItems.slice(start, end);
   },
 
-  // Методы
   setFilter(filter) {
-    try {
-      this.activeFilter = filter;
-      this.currentPage = 0;
-      this.updateActiveFilterButtons();
-    } catch (error) {
-      console.error("Ошибка при установке фильтра:", error);
-    }
+    this.activeFilter = filter;
+    this.currentPage = 0;
+    this.updateActiveFilterButtons();
   },
 
   updateActiveFilterButtons() {
@@ -77,56 +62,36 @@ export const gallery = () => ({
   },
 
   nextPage() {
-    try {
-      if (this.currentPage < this.totalPages - 1) {
-        this.currentPage++;
-      }
-    } catch (error) {
-      console.error("Ошибка при переходе на следующую страницу:", error);
+    if (this.currentPage < this.totalPages - 1) {
+      this.currentPage++;
     }
   },
 
   prevPage() {
-    try {
-      if (this.currentPage > 0) {
-        this.currentPage--;
-      }
-    } catch (error) {
-      console.error("Ошибка при переходе на предыдущую страницу:", error);
+    if (this.currentPage > 0) {
+      this.currentPage--;
     }
   },
 
   goToPage(page) {
-    try {
-      this.currentPage = page;
-    } catch (error) {
-      console.error("Ошибка при переходе на страницу:", error);
-    }
+    this.currentPage = page;
   },
 
   openLightbox(item) {
-    try {
-      this.lightbox = {
-        open: true,
-        image: item.image,
-        title: item.title,
-        description: item.description,
-        date: item.date,
-        category: item.category,
-      };
-      document.body.style.overflow = "hidden";
-    } catch (error) {
-      console.error("Ошибка при открытии лайтбокса:", error);
-    }
+    this.lightbox = {
+      open: true,
+      image: item.image,
+      title: item.title,
+      description: item.description,
+      date: item.date,
+      category: item.category,
+    };
+    document.body.style.overflow = "hidden";
   },
 
   closeLightbox() {
-    try {
-      this.lightbox.open = false;
-      document.body.style.overflow = "";
-    } catch (error) {
-      console.error("Ошибка при закрытии лайтбокса:", error);
-    }
+    this.lightbox.open = false;
+    document.body.style.overflow = "";
   },
 
   nextImage() {
