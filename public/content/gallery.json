@@ -86,6 +86,16 @@
       "badge": "new",
       "date": "12.12.1921",
       "featured": false
+    },
+    {
+      "id": 1781462366994,
+      "image": "/images/gallery/1781462381344-_________________2026-06-11_18-24-13.png",
+      "title": "new2",
+      "description": "new2",
+      "type": "training",
+      "badge": "new2",
+      "date": "new2",
+      "featured": false
     }
   ]
 }
