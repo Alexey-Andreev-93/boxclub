@@ -2,7 +2,11 @@ import os
 import json
 import base64
 import hashlib
+import hmac
+import secrets
+import time
 import urllib.request
+from collections import defaultdict
 
 GH_PAT = os.environ.get("GH_PAT", "")
 BASE_URL = os.environ.get("BASE_URL", "")
@@ -11,10 +15,36 @@ GH_OWNER = "Alexey-Andreev-93"
 GH_REPO = "boxclub"
 GH_BRANCH = "main"
 
+ALLOWED_UPLOAD_FOLDERS = {"gallery", "reviews", "hero", "trainer"}
+ALLOWED_ORIGINS = {
+    "https://boxclub.website.yandexcloud.net",
+    "https://d5dno7rs14sms0o16i5m.nkhmighe.apigw.yandexcloud.net",
+}
+
+TOKENS = {}
+RATE_LIMITS = defaultdict(lambda: [0, 0.0])
+
+
+def is_rate_limited(event):
+    ip = event.get("requestContext", {}).get("sourceIp", "unknown")
+    record = RATE_LIMITS[ip]
+    now = time.time()
+    if now - record[1] > 60:
+        RATE_LIMITS[ip] = [1, now]
+        return False
+    if record[0] >= 15:
+        return True
+    record[0] += 1
+    return False
+
 
 def handler(event, context):
     path = event.get("path", event.get("requestContext", {}).get("path", ""))
     method = event.get("httpMethod", event.get("requestContext", {}).get("method", "GET"))
+
+    if is_rate_limited(event):
+        return respond(429, json.dumps({"error": "Too many requests"}), event)
+
     params = {}
     qp = event.get("queryStringParameters") or {}
     mqp = event.get("multiValueQueryStringParameters") or {}
@@ -30,39 +60,58 @@ def handler(event, context):
         except (json.JSONDecodeError, TypeError):
             pass
 
+    headers = event.get("headers", {}) or {}
+    auth_header = headers.get("Authorization", "")
+    if auth_header.startswith("Bearer "):
+        params["_token"] = auth_header[7:]
+
     if method == "OPTIONS":
-        return respond(200, json.dumps({"ok": True}))
+        return respond(200, json.dumps({"ok": True}), event)
 
     if path.endswith("admin/login"):
-        return handle_admin_login(params)
+        return handle_admin_login(params, event)
     elif path.endswith("admin/save"):
-        return handle_admin_save(params)
+        return handle_admin_save(params, event)
     elif path.endswith("admin/upload"):
         return handle_admin_upload(params, event)
     else:
-        return respond(400, json.dumps({"path": path, "params": params}))
+        return respond(400, json.dumps({"path": path, "params": params}), event)
 
 
-def handle_admin_login(params):
-    password = params.get("password", "")
+def verify_password(password):
     if not ADMIN_PASS_HASH:
-        return respond(500, "Admin password not configured")
+        return False
     pwd_hash = hashlib.sha256(password.encode()).hexdigest()
-    if pwd_hash != ADMIN_PASS_HASH:
-        return respond(401, json.dumps({"error": "Неверный пароль"}))
-    return respond(200, json.dumps({"success": True}))
+    return hmac.compare_digest(pwd_hash, ADMIN_PASS_HASH)
 
 
-def handle_admin_save(params):
+def verify_token(token):
+    expiry = TOKENS.get(token)
+    if not expiry:
+        return False
+    if time.time() > expiry:
+        del TOKENS[token]
+        return False
+    return True
+
+
+def handle_admin_login(params, event):
     password = params.get("password", "")
-    files = params.get("files", [])
+    if not verify_password(password):
+        return respond(401, json.dumps({"error": "Неверный пароль"}), event)
+    token = secrets.token_urlsafe(32)
+    TOKENS[token] = time.time() + 1800
+    return respond(200, json.dumps({"success": True, "token": token}), event)
 
-    if not ADMIN_PASS_HASH:
-        return respond(500, json.dumps({"error": "Admin password not configured"}))
-    if hashlib.sha256(password.encode()).hexdigest() != ADMIN_PASS_HASH:
-        return respond(401, json.dumps({"error": "Неверный пароль"}))
+
+def handle_admin_save(params, event):
+    files = params.get("files", [])
+    token = params.get("token", params.get("_token", ""))
+
+    if not verify_token(token):
+        return respond(401, json.dumps({"error": "Сессия истекла"}), event)
     if not GH_PAT:
-        return respond(500, json.dumps({"error": "GH_PAT not configured"}))
+        return respond(500, json.dumps({"error": "GH_PAT not configured"}), event)
 
     headers = {
         "Authorization": f"Bearer {GH_PAT}",
@@ -88,35 +137,36 @@ def handle_admin_save(params):
                 else:
                     raise
 
-            body = json.dumps({
+            request_body = json.dumps({
                 "message": "Updated via admin",
                 "content": base64.b64encode(content.encode()).decode(),
                 "sha": sha,
                 "branch": GH_BRANCH,
             })
-            req = urllib.request.Request(url, data=body.encode(), headers=headers, method="PUT")
+            req = urllib.request.Request(url, data=request_body.encode(), headers=headers, method="PUT")
             urllib.request.urlopen(req)
             results.append({"path": path, "success": True})
         except Exception as e:
             results.append({"path": path, "success": False, "error": str(e)})
 
-    return respond(200, json.dumps({"success": True, "results": results}))
+    return respond(200, json.dumps({"success": True, "results": results}), event)
 
 
 def handle_admin_upload(params, event):
-    password = params.get("password", "")
     filename = params.get("filename", "")
     data = params.get("data", "")
     folder = params.get("folder", "gallery")
+    token = params.get("token", params.get("_token", ""))
 
-    if hashlib.sha256(password.encode()).hexdigest() != ADMIN_PASS_HASH:
-        return respond(401, json.dumps({"error": "Неверный пароль"}))
-    if not filename:
-        return respond(400, json.dumps({"error": "filename required"}))
+    if not verify_token(token):
+        return respond(401, json.dumps({"error": "Сессия истекла"}), event)
+    if folder not in ALLOWED_UPLOAD_FOLDERS:
+        return respond(400, json.dumps({"error": "Invalid folder"}), event)
+    if not filename or ".." in filename or "/" in filename:
+        return respond(400, json.dumps({"error": "Invalid filename"}), event)
     if not data:
-        return respond(400, json.dumps({"error": "data required"}))
+        return respond(400, json.dumps({"error": "data required"}), event)
 
-    # Remove data URL prefix if present (e.g. "data:image/png;base64,")
     if "," in data:
         data = data.split(",")[1]
 
@@ -142,26 +192,29 @@ def handle_admin_upload(params, event):
             else:
                 raise
 
-        body = json.dumps({
+        request_body = json.dumps({
             "message": f"Upload {filename} via admin",
             "content": data,
             "sha": sha,
             "branch": GH_BRANCH,
         })
-        req = urllib.request.Request(url, data=body.encode(), headers=gh_headers, method="PUT")
+        req = urllib.request.Request(url, data=request_body.encode(), headers=gh_headers, method="PUT")
         urllib.request.urlopen(req)
-        return respond(200, json.dumps({"success": True, "url": f"/images/{folder}/{filename}"}))
+        return respond(200, json.dumps({"success": True, "url": f"/images/{folder}/{filename}"}), event)
     except Exception as e:
-        return respond(500, json.dumps({"error": str(e)}))
+        return respond(500, json.dumps({"error": str(e)}), event)
 
 
-def respond(code, body, headers=None):
+def respond(code, body, event=None):
     h = {"Content-Type": "application/json"}
-    if headers:
-        h.update(headers)
-    h["Access-Control-Allow-Origin"] = "*"
-    h["Access-Control-Allow-Headers"] = "Content-Type"
+    h["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
     h["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+
+    if event:
+        origin = (event.get("headers", {}) or {}).get("origin", "")
+        if origin in ALLOWED_ORIGINS:
+            h["Access-Control-Allow-Origin"] = origin
+
     if code == 302:
         h.pop("Content-Type", None)
     return {

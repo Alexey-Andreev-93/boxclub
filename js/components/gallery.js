@@ -172,42 +172,26 @@ export const gallery = () => ({
   },
 
   init() {
-    try {
-      this.updateActiveFilterButtons();
+    this.updateActiveFilterButtons();
 
-      // Обработка клавиш
-      document.addEventListener("keydown", (e) => {
-        try {
-          if (!this.lightbox.open) return;
+    this._onKeydown = (e) => {
+      if (!this.lightbox.open) return;
+      switch (e.key) {
+        case "Escape": this.closeLightbox(); break;
+        case "ArrowRight": this.nextImage(); break;
+        case "ArrowLeft": this.prevImage(); break;
+      }
+    };
+    document.addEventListener("keydown", this._onKeydown);
 
-          switch (e.key) {
-            case "Escape":
-              this.closeLightbox();
-              break;
-            case "ArrowRight":
-              this.nextImage();
-              break;
-            case "ArrowLeft":
-              this.prevImage();
-              break;
-          }
-        } catch (error) {
-          console.error("Ошибка при обработке нажатия клавиши:", error);
-        }
-      });
+    this.$watch("lightbox.open", (value) => {
+      if (!value) {
+        document.body.style.overflow = "";
+      }
+    });
+  },
 
-      // Закрытие лайтбокса по клику на оверлей
-      this.$watch("lightbox.open", (value) => {
-        try {
-          if (!value) {
-            document.body.style.overflow = "";
-          }
-        } catch (error) {
-          console.error("Ошибка при закрытии лайтбокса по клику на оверлей:", error);
-        }
-      });
-    } catch (error) {
-      console.error("Ошибка при инициализации компонента gallery:", error);
-    }
+  destroy() {
+    document.removeEventListener("keydown", this._onKeydown);
   },
 });

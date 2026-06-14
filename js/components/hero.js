@@ -1,19 +1,19 @@
 export const hero = () => ({
-  // Данные для счетчиков
   stats: {
     students: 0,
     experience: 0,
     price: "0 ₽",
   },
 
-  // Данные для модального окна
   modal: {
     open: false,
     image: "",
     title: "",
   },
 
-  // Сборка инлайн-стиля для достижения
+  _observer: null,
+  _counterTimers: [],
+
   achievementStyle(a) {
     let s = '';
     if (a.top !== undefined) s += `top:${a.top}%;`;
@@ -25,152 +25,114 @@ export const hero = () => ({
     return s;
   },
 
-  // Метод для инициализации компонента
   init() {
-    try {
-      this.initParallax();
-      // Анимация счетчиков при появлении в viewport
-      const observer = new IntersectionObserver(
-        (entries) => {
-          try {
-            if (entries[0].isIntersecting) {
-              this.animateCounters();
-            }
-          } catch (error) {
-            console.error("Ошибка при обработке пересечения:", error);
-          }
-        },
-        { threshold: 0.3 }
-      );
+    this._onKeydown = (e) => {
+      if (e.key === "Escape" && this.modal.open) {
+        this.closeModal();
+      }
+    };
+    document.addEventListener("keydown", this._onKeydown);
 
-      observer.observe(this.$el);
-
-      document.addEventListener("keydown", (e) => {
-        try {
-          if (e.key === "Escape" && this.modal.open) {
-            this.closeModal();
-          }
-        } catch (error) {
-          console.error("Ошибка при обработке нажатия клавиши Escape:", error);
-        }
-      });
-    } catch (error) {
-      console.error("Ошибка при инициализации компонента hero:", error);
-    }
+    this._initParallax();
+    this._initCounters();
   },
 
-  // Метод для инициализации параллакса
-  initParallax() {
-    try {
-      // Только для десктопных устройств
-      if (window.innerWidth < 768) return;
-
-      const bgElement = this.$el.querySelector(".hero__bg");
-      if (!bgElement) return;
-
-      window.addEventListener("scroll", () => {
-        try {
-          const scrolled = window.pageYOffset;
-          const rate = scrolled * 0.3; // Скорость параллакса
-
-          bgElement.style.transform = `translateY(${rate}px)`;
-        } catch (error) {
-          console.error("Ошибка при обработке события прокрутки:", error);
-        }
-      });
-    } catch (error) {
-      console.error("Ошибка при инициализации параллакса:", error);
+  destroy() {
+    document.removeEventListener("keydown", this._onKeydown);
+    if (this._onScroll) {
+      window.removeEventListener("scroll", this._onScroll);
     }
+    if (this._observer) {
+      this._observer.disconnect();
+    }
+    this._counterTimers.forEach(fn => fn());
   },
 
-  // Метод для анимации счетчиков
-  animateCounters() {
-    try {
-      // Анимация счетчика учеников
-      this.animateCounter("students", 100, 2000);
+  _initParallax() {
+    if (window.innerWidth < 768) return;
 
-      // Анимация опыта
-      this.animateCounter("experience", 5, 1500);
+    const bgElement = this.$el.querySelector(".hero__bg");
+    if (!bgElement) return;
 
-      // Цена (без анимации)
-      setTimeout(() => {
-        try {
-          this.stats.price = "0 ₽";
-        } catch (error) {
-          console.error("Ошибка при установке цены:", error);
-        }
-      }, 500);
-    } catch (error) {
-      console.error("Ошибка при анимации счетчиков:", error);
-    }
+    let ticking = false;
+    this._onScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          bgElement.style.transform = `translateY(${window.pageYOffset * 0.3}px)`;
+          ticking = false;
+        });
+        ticking = true;
+      }
+    };
+    window.addEventListener("scroll", this._onScroll, { passive: true });
   },
 
-  // Метод для анимации счетчика
-  animateCounter(stat, target, duration) {
-    try {
-      let start = 0;
-      const increment = target / (duration / 16);
-
-      const timer = setInterval(() => {
-        try {
-          start += increment;
-          if (start >= target) {
-            this.stats[stat] = stat === "students" ? target + "+" : target;
-            clearInterval(timer);
-          } else {
-            this.stats[stat] = Math.floor(start);
-          }
-        } catch (error) {
-          console.error("Ошибка при обновлении счетчика:", error);
-          clearInterval(timer);
+  _initCounters() {
+    this._observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) {
+          this._animateCounters();
+          this._observer.disconnect();
         }
-      }, 16);
-    } catch (error) {
-      console.error("Ошибка при анимации счетчика:", error);
-    }
+      },
+      { threshold: 0.3 }
+    );
+    this._observer.observe(this.$el);
   },
 
-  // Метод для открытия модального окна
+  _animateCounters() {
+    this._animateCounter("students", 100, 2000);
+    this._animateCounter("experience", 5, 1500);
+
+    const priceTimer = setTimeout(() => {
+      this.stats.price = "0 ₽";
+    }, 500);
+    this._counterTimers.push(() => clearTimeout(priceTimer));
+  },
+
+  _animateCounter(stat, target, duration) {
+    const startTime = performance.now();
+    const isStudents = stat === "students";
+
+    const frame = (now) => {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / duration, 1);
+      const current = Math.floor(progress * target);
+
+      this.stats[stat] = progress >= 1
+        ? (isStudents ? target + "+" : target)
+        : current;
+
+      if (progress < 1) {
+        this._rafId = requestAnimationFrame(frame);
+      }
+    };
+
+    this._rafId = requestAnimationFrame(frame);
+    this._counterTimers.push(() => {
+      if (this._rafId) cancelAnimationFrame(this._rafId);
+    });
+  },
+
   openModal(achievement) {
-    try {
-      this.modal = {
-        open: true,
-        image: achievement.image,
-        title: achievement.title,
-      };
-
-      // Блокируем скролл страницы
-      document.body.style.overflow = "hidden";
-    } catch (error) {
-      console.error("Ошибка при открытии модального окна:", error);
-    }
+    this.modal = {
+      open: true,
+      image: achievement.image,
+      title: achievement.title,
+    };
+    document.body.style.overflow = "hidden";
   },
 
-  // Метод для закрытия модального окна
   closeModal() {
-    try {
-      this.modal.open = false;
-      document.body.style.overflow = "";
-    } catch (error) {
-      console.error("Ошибка при закрытии модального окна:", error);
-    }
+    this.modal.open = false;
+    document.body.style.overflow = "";
   },
 
-  // Пауза анимации при наведении
   pauseAnimation(event) {
-    try {
-      event.target.style.animationPlayState = "paused";
-    } catch (error) {
-      console.error("Ошибка при паузе анимации:", error);
-    }
+    event.target.style.animationPlayState = "paused";
   },
 
-  // Возобновление анимации
   resumeAnimation(event) {
-    try {
-      event.target.style.animationPlayState = "running";
-    } catch (error) {
-      console.error("Ошибка при возобновлении анимации:", error);
-    }
+    event.target.style.animationPlayState = "running";
   },
 });

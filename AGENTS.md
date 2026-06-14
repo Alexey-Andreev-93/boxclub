@@ -120,8 +120,10 @@ On push to `main`:
 
 ```bash
 npm run build
-python3 .github/scripts/deploy.py   # requires YC_KEY_ID + YC_SECRET env vars
+export $(cat .env | xargs) && python3 .github/scripts/deploy.py
 ```
+
+Требует `YC_KEY_ID` + `YC_SECRET` в `.env` (файл в `.gitignore`, не пушится).
 
 ### GitHub Secrets needed
 

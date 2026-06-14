@@ -1,6 +1,6 @@
-const API = 'https://d5dno7rs14sms0o16i5m.nkhmighe.apigw.yandexcloud.net';
+const API = window.ADMIN_API || '';
 const content = {};
-let password = '';
+let token = '';
 let dirty = false;
 
 function login() {
@@ -15,9 +15,9 @@ function login() {
     if (!r.ok) { err.textContent = 'Неверный пароль'; throw new Error('auth'); }
     return r.json();
   })
-  .then(function() {
-    password = pwd;
-    sessionStorage.setItem('boxclub_pass', pwd);
+  .then(function(data) {
+    token = data.token;
+    sessionStorage.setItem('boxclub_token', data.token);
     loadContent();
   })
   .catch(function(e) { if (e.message !== 'auth') err.textContent = 'Ошибка соединения'; });
@@ -26,8 +26,8 @@ function login() {
 function loadContent() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('adminScreen').classList.add('active');
-  password = sessionStorage.getItem('boxclub_pass');
-  if (!password) return location.reload();
+  token = sessionStorage.getItem('boxclub_token');
+  if (!token) return location.reload();
   const files = ['training', 'gallery', 'reviews', 'achievements', 'site', 'contact'];
   let loaded = 0;
   files.forEach(function(name) {
@@ -465,18 +465,33 @@ function uploadImage(index, folder, input, field, renderFn) {
   }
   let file = input.files[0];
   if (!file) return;
+  let wrap = input.parentElement;
   let label = input.nextElementSibling;
   let pathSpan = label.nextElementSibling;
-  label.textContent = 'Загрузка...';
+
+  let progressEl = document.createElement('span');
+  progressEl.className = 'upload-progress';
+  progressEl.innerHTML = '<span class="progress-track"><span class="progress-fill" style="width:0%"></span></span> <span class="progress-text">0%</span>';
+  label.style.display = 'none';
+  wrap.insertBefore(progressEl, pathSpan);
 
   let reader = new FileReader();
+  reader.onprogress = function(e) {
+    if (e.lengthComputable) {
+      let pct = Math.round(e.loaded / e.total * 100);
+      progressEl.querySelector('.progress-fill').style.width = pct + '%';
+      progressEl.querySelector('.progress-text').textContent = pct + '%';
+    }
+  };
   reader.onload = function(e) {
+    progressEl.querySelector('.progress-fill').style.width = '90%';
+    progressEl.querySelector('.progress-text').textContent = 'Отправка...';
     let dataUrl = e.target.result;
     let filename = Date.now() + '-' + file.name.replace(/[^a-zA-Z0-9.-]/g, '_').toLowerCase();
     fetch(API + '/admin/upload', {
       method: 'POST',
       headers: {'Content-Type': 'application/json'},
-      body: JSON.stringify({password: password, filename: filename, data: dataUrl, folder: folder})
+      body: JSON.stringify({token: token, filename: filename, data: dataUrl, folder: folder})
     })
     .then(function(r) { return r.json(); })
     .then(function(data) {
@@ -486,23 +501,26 @@ function uploadImage(index, folder, input, field, renderFn) {
         else if (folder === 'hero') content.achievements.items[index][field] = data.url;
         else if (folder === 'trainer') content.site.about.trainers[index][field] = data.url;
         dirty = true;
-        label.innerHTML = '<i class="fas fa-upload"></i> Выбрать файл';
+        progressEl.remove();
+        label.style.display = '';
         pathSpan.textContent = data.url;
         if (renderFn) renderFn();
       } else {
-        label.textContent = 'Ошибка, попробуйте снова';
+        progressEl.querySelector('.progress-fill').style.background = '#e74c3c';
+        progressEl.querySelector('.progress-text').textContent = 'Ошибка';
       }
     })
     .catch(function() {
-      label.textContent = 'Ошибка соединения';
+      progressEl.querySelector('.progress-fill').style.background = '#e74c3c';
+      progressEl.querySelector('.progress-text').textContent = 'Ошибка соединения';
     });
   };
   reader.readAsDataURL(file);
 }
 
 function logout() {
-  sessionStorage.removeItem('boxclub_pass');
-  password = '';
+  sessionStorage.removeItem('boxclub_token');
+  token = '';
   document.getElementById('adminScreen').classList.remove('active');
   document.getElementById('loginScreen').style.display = '';
   document.getElementById('passwordInput').value = '';
@@ -613,13 +631,37 @@ function switchTab(name) {
   document.querySelector('.sidebar a[data-tab="'+name+'"]').classList.add('active');
 }
 
+function validateData() {
+  let errors = [];
+  if (!content.training || !Array.isArray(content.training.categories))
+    errors.push('Тренировки: отсутствуют категории');
+  if (!content.gallery || !Array.isArray(content.gallery.items))
+    errors.push('Галерея: отсутствуют элементы');
+  if (!content.reviews || !Array.isArray(content.reviews.items))
+    errors.push('Отзывы: отсутствуют элементы');
+  if (!content.achievements || !Array.isArray(content.achievements.items))
+    errors.push('Достижения: отсутствуют элементы');
+  if (!content.site || !content.site.about)
+    errors.push('О школе: отсутствуют данные');
+  if (!content.contact)
+    errors.push('Контакты: отсутствуют данные');
+  return errors;
+}
+
 function saveAll() {
   let btn = document.getElementById('saveBtn');
   let status = document.getElementById('saveStatus');
   btn.disabled = true;
   status.className = 'save-status';
   status.textContent = 'Сохранение...';
-  if (!password) { status.className = 'save-status error'; status.textContent = 'Сессия истекла, перезагрузите страницу'; btn.disabled = false; return; }
+  if (!token) { status.className = 'save-status error'; status.textContent = 'Сессия истекла, перезагрузите страницу'; btn.disabled = false; return; }
+  let validation = validateData();
+  if (validation.length) {
+    status.className = 'save-status error';
+    status.textContent = 'Ошибка: ' + validation.join('; ');
+    btn.disabled = false;
+    return;
+  }
   let files = [
     {path:'public/content/training.json', content: JSON.stringify(content.training, null, 2)},
     {path:'public/content/gallery.json', content: JSON.stringify(content.gallery, null, 2)},
@@ -631,7 +673,7 @@ function saveAll() {
   fetch(API + '/admin/save', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({password: password, files: files})
+    body: JSON.stringify({token: token, files: files})
   })
   .then(function(r) { return r.json(); })
   .then(function(data) {
@@ -655,8 +697,8 @@ document.getElementById('passwordInput').addEventListener('keydown', function(e)
   if (e.key === 'Enter') login();
 });
 
-password = sessionStorage.getItem('boxclub_pass');
-if (password) loadContent();
+token = sessionStorage.getItem('boxclub_token');
+if (token) loadContent();
 
 window.addEventListener('beforeunload', function(e) {
   if (dirty) {

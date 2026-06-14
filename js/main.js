@@ -17,28 +17,30 @@ Alpine.data('contactInfo', contactInfo);
 
 const BASE = import.meta.env.BASE_URL;
 
-Alpine.store('site', { hero: {}, about: {} });
-Alpine.store('contact', {});
-Alpine.store('achievements', { items: [] });
-Alpine.store('training', { categories: [] });
-Alpine.store('gallery', { items: [] });
-Alpine.store('reviews', { items: [] });
+const defaults = {
+  site: { hero: {}, about: {} },
+  contact: {},
+  achievements: { items: [] },
+  training: { categories: [] },
+  gallery: { items: [] },
+  reviews: { items: [] },
+};
+
+Object.entries(defaults).forEach(([key, val]) => Alpine.store(key, val));
+
+function fetchJson(url, fallback) {
+  return fetch(url, { signal: AbortSignal.timeout(5000) })
+    .then(r => r.ok ? r.json() : Promise.reject(new Error(`${r.status}`)))
+    .catch(() => fallback);
+}
 
 Promise.all([
-  fetch(`${BASE}content/site.json`).then(r => r.json()),
-  fetch(`${BASE}content/contact.json`).then(r => r.json()),
-  fetch(`${BASE}content/achievements.json`).then(r => r.json()),
-  fetch(`${BASE}content/training.json`).then(r => r.json()),
-  fetch(`${BASE}content/gallery.json`).then(r => r.json()),
-  fetch(`${BASE}content/reviews.json`).then(r => r.json()),
-]).then(([siteData, contactData, achievementsData, trainingData, galleryData, reviewsData]) => {
-  Alpine.store('site', siteData);
-  Alpine.store('contact', contactData);
-  Alpine.store('achievements', achievementsData);
-  Alpine.store('training', trainingData);
-  Alpine.store('gallery', galleryData);
-  Alpine.store('reviews', reviewsData);
-}).catch(e => console.error('Ошибка загрузки данных сайта:', e));
+  fetchJson(`${BASE}content/site.json`, defaults.site).then(d => { Alpine.store('site', d); }),
+  fetchJson(`${BASE}content/contact.json`, defaults.contact).then(d => { Alpine.store('contact', d); }),
+  fetchJson(`${BASE}content/achievements.json`, defaults.achievements).then(d => { Alpine.store('achievements', d); }),
+  fetchJson(`${BASE}content/training.json`, defaults.training).then(d => { Alpine.store('training', d); }),
+  fetchJson(`${BASE}content/gallery.json`, defaults.gallery).then(d => { Alpine.store('gallery', d); }),
+  fetchJson(`${BASE}content/reviews.json`, defaults.reviews).then(d => { Alpine.store('reviews', d); }),
+]);
 
-window.Alpine = Alpine;
 Alpine.start();
