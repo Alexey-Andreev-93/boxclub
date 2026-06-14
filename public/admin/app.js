@@ -320,9 +320,9 @@ function renderContact() {
     h += '<div class="field"><label>Группа</label><input value="' + esc(g.group) + '" data-change="set-contact" data-path="schedule.' + gi + '.group"></div>';
     (g.days || []).forEach(function(d, di) {
       h += '<div style="display:flex;gap:0.5rem;margin-bottom:0.5rem">';
-      h += '<input style="flex:1" value="' + esc(d.days) + '" placeholder="Дни" data-change="set-contact" data-path="schedule.' + gi + '.days.' + di + '.days">';
-      h += '<input style="flex:1" value="' + esc(d.time) + '" placeholder="Время" data-change="set-contact" data-path="schedule.' + gi + '.days.' + di + '.time">';
-      h += '<button style="background:none;border:none;color:#e74c3c" data-click="remove-schedule-day" data-gi="' + gi + '" data-di="' + di + '"><i class="fas fa-times"></i></button>';
+      h += '<input style="flex:1;min-width:0" value="' + esc(d.days) + '" placeholder="Дни" data-change="set-contact" data-path="schedule.' + gi + '.days.' + di + '.days">';
+      h += '<input style="flex:1;min-width:0" value="' + esc(d.time) + '" placeholder="Время" data-change="set-contact" data-path="schedule.' + gi + '.days.' + di + '.time">';
+      h += '<button style="flex-shrink:0;background:none;border:none;color:#e74c3c" data-click="remove-schedule-day" data-gi="' + gi + '" data-di="' + di + '"><i class="fas fa-times"></i></button>';
       h += '</div>';
     });
     h += '<button class="add-btn" data-click="add-schedule-day" data-gi="' + gi + '"><i class="fas fa-plus"></i> Добавить день</button>';
