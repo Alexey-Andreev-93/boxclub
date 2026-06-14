@@ -3,7 +3,6 @@ import json
 import base64
 import hashlib
 import hmac
-import secrets
 import time
 import urllib.request
 from collections import defaultdict
@@ -11,6 +10,8 @@ from collections import defaultdict
 GH_PAT = os.environ.get("GH_PAT", "")
 BASE_URL = os.environ.get("BASE_URL", "")
 ADMIN_PASS_HASH = os.environ.get("ADMIN_PASS_HASH", "")
+JWT_SECRET = os.environ.get("JWT_SECRET", "")
+JWT_EXPIRY = 1800
 GH_OWNER = "Alexey-Andreev-93"
 GH_REPO = "boxclub"
 GH_BRANCH = "main"
@@ -21,7 +22,6 @@ ALLOWED_ORIGINS = {
     "https://d5dno7rs14sms0o16i5m.nkhmighe.apigw.yandexcloud.net",
 }
 
-TOKENS = {}
 RATE_LIMITS = defaultdict(lambda: [0, 0.0])
 
 
@@ -86,11 +86,27 @@ def verify_password(password):
 
 
 def verify_token(token):
-    expiry = TOKENS.get(token)
-    if not expiry:
+    if not JWT_SECRET:
         return False
-    if time.time() > expiry:
-        del TOKENS[token]
+    parts = token.split(".")
+    if len(parts) != 3:
+        return False
+    header_b64, payload_b64, signature = parts
+    expected = hmac.new(
+        JWT_SECRET.encode(),
+        f"{header_b64}.{payload_b64}".encode(),
+        hashlib.sha256
+    ).hexdigest()
+    if not hmac.compare_digest(signature, expected):
+        return False
+    try:
+        padding = 4 - len(payload_b64) % 4
+        if padding != 4:
+            payload_b64 += "=" * padding
+        data = json.loads(base64.urlsafe_b64decode(payload_b64))
+    except Exception:
+        return False
+    if time.time() > data.get("exp", 0):
         return False
     return True
 
@@ -99,8 +115,18 @@ def handle_admin_login(params, event):
     password = params.get("password", "")
     if not verify_password(password):
         return respond(401, json.dumps({"error": "Неверный пароль"}), event)
-    token = secrets.token_urlsafe(32)
-    TOKENS[token] = time.time() + 1800
+    header = base64.urlsafe_b64encode(
+        json.dumps({"alg": "HS256"}).encode()
+    ).rstrip(b"=").decode()
+    payload = base64.urlsafe_b64encode(
+        json.dumps({"exp": int(time.time()) + JWT_EXPIRY}).encode()
+    ).rstrip(b"=").decode()
+    signature = hmac.new(
+        JWT_SECRET.encode(),
+        f"{header}.{payload}".encode(),
+        hashlib.sha256
+    ).hexdigest()
+    token = f"{header}.{payload}.{signature}"
     return respond(200, json.dumps({"success": True, "token": token}), event)
 
 
