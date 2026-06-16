@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://boxclub.website.yandexcloud.net/sitemap.xml
