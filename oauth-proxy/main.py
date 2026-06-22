@@ -5,7 +5,9 @@ import hashlib
 import hmac
 import time
 import urllib.request
+import io
 from collections import defaultdict
+from PIL import Image
 
 GH_PAT = os.environ.get("GH_PAT", "")
 BASE_URL = os.environ.get("BASE_URL", "")
@@ -195,6 +197,16 @@ def handle_admin_upload(params, event):
 
     if "," in data:
         data = data.split(",")[1]
+
+    try:
+        img_bytes = base64.b64decode(data)
+        img = Image.open(io.BytesIO(img_bytes))
+        output = io.BytesIO()
+        img.convert("RGB").save(output, "WEBP", quality=85)
+        data = base64.b64encode(output.getvalue()).decode()
+        filename = os.path.splitext(filename)[0] + ".webp"
+    except Exception:
+        return respond(400, json.dumps({"error": "Файл не является изображением"}), event)
 
     filepath = f"public/images/{folder}/{filename}"
 
