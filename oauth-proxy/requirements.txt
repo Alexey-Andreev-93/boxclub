@@ -1,1 +1,1 @@
-Pillow
+# No external dependencies (uses only stdlib)
