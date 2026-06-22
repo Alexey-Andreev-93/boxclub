@@ -96,6 +96,16 @@
       "badge": "new2",
       "date": "new2",
       "featured": false
+    },
+    {
+      "id": 1782144165771,
+      "image": "/images/gallery/1782144203641-_________________2026-06-11_18-24-13.png",
+      "title": "new",
+      "description": "new",
+      "type": "training",
+      "badge": "new",
+      "date": "12.12.12",
+      "featured": false
     }
   ]
 }
