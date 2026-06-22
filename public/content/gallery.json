@@ -76,36 +76,6 @@
       "date": "18.11.2023",
       "category": "Командные мероприятия",
       "featured": false
-    },
-    {
-      "id": 1781462207685,
-      "image": "/images/gallery/1781462212182-_________________2026-06-14_20-58-33.png",
-      "title": "new",
-      "description": "new",
-      "type": "training",
-      "badge": "new",
-      "date": "12.12.1921",
-      "featured": false
-    },
-    {
-      "id": 1781462366994,
-      "image": "/images/gallery/1781462381344-_________________2026-06-11_18-24-13.png",
-      "title": "new2",
-      "description": "new2",
-      "type": "training",
-      "badge": "new2",
-      "date": "new2",
-      "featured": false
-    },
-    {
-      "id": 1782144165771,
-      "image": "/images/gallery/1782144203641-_________________2026-06-11_18-24-13.png",
-      "title": "new",
-      "description": "new",
-      "type": "training",
-      "badge": "new",
-      "date": "12.12.12",
-      "featured": false
     }
   ]
 }
