@@ -528,8 +528,8 @@
           <div class="review-card">
             <div class="review-card__content">
               <div class="review-card__stars">
-                <template x-for="star in 5">
-                  <i class="fas fa-star"></i>
+                <template x-for="star in 5" :key="star">
+                  <i :class="star <= (review.rating || 5) ? 'fas fa-star' : 'far fa-star'"></i>
                 </template>
               </div>
               <p class="review-card__text" x-text="review.text"></p>

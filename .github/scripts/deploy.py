@@ -1,4 +1,5 @@
 import os
+import sys
 import hashlib
 import hmac
 import urllib.request
@@ -27,26 +28,44 @@ def get_sig(k, ds, r, s):
     return sign(sign(sign(sign(("AWS4" + k).encode(), ds), r), s), "aws4_request")
 
 
-def s3_request(method, s3_path, body, content_type, query_string):
+CACHE_IMMUTABLE = "public, max-age=31536000, immutable"
+CACHE_REVALIDATE = "public, max-age=0, must-revalidate"
+
+
+def get_cache_control(path):
+    ext = path.suffix.lower()
+    if ext in (".webp", ".png", ".jpg", ".jpeg", ".svg", ".ico", ".avif"):
+        return CACHE_IMMUTABLE
+    if ext in (".css", ".js", ".woff", ".woff2", ".ttf", ".otf", ".eot"):
+        return CACHE_IMMUTABLE
+    return CACHE_REVALIDATE
+
+
+def s3_request(method, s3_path, body, content_type, query_string, cache_control=None):
     encoded_path = urllib.parse.quote(s3_path, safe="/")
     body_hash = hashlib.sha256(body).hexdigest()
 
     qs = query_string.lstrip("?") if query_string else ""
 
+    cc = f"cache-control:{cache_control}\n" if cache_control else ""
+    cc_signed = "cache-control;" if cache_control else ""
+
     canonical_headers = (
         f"host:{host}\n"
+        f"{cc}"
         f"x-amz-content-sha256:{body_hash}\n"
         f"x-amz-date:{amz_date}\n"
     )
-    signed_headers = "host;x-amz-content-sha256;x-amz-date"
+    signed_headers = f"host;{cc_signed}x-amz-content-sha256;x-amz-date"
     if content_type:
         canonical_headers = (
             f"host:{host}\n"
             f"content-type:{content_type}\n"
+            f"{cc}"
             f"x-amz-content-sha256:{body_hash}\n"
             f"x-amz-date:{amz_date}\n"
         )
-        signed_headers = "host;content-type;x-amz-content-sha256;x-amz-date"
+        signed_headers = f"host;content-type;{cc_signed}x-amz-content-sha256;x-amz-date"
 
     canonical_request = (
         f"{method}\n/{encoded_path}\n{qs}\n{canonical_headers}\n{signed_headers}\n{body_hash}"
@@ -74,15 +93,17 @@ def s3_request(method, s3_path, body, content_type, query_string):
     }
     if content_type:
         headers["Content-Type"] = content_type
+    if cache_control:
+        headers["Cache-Control"] = cache_control
 
     req = urllib.request.Request(url, data=body, headers=headers, method=method)
     return urllib.request.urlopen(req)
 
 
-def s3_put(s3_path, file_path, content_type):
+def s3_put(s3_path, file_path, content_type, cache_control=None):
     with open(file_path, "rb") as f:
         body = f.read()
-    s3_request("PUT", s3_path, body, content_type, "")
+    s3_request("PUT", s3_path, body, content_type, "", cache_control)
 
 
 def s3_list_all():
@@ -130,6 +151,7 @@ docs = Path("docs")
 
 # Build set of expected S3 keys
 local_keys = set()
+upload_errors = 0
 for path in sorted(docs.rglob("*")):
     if path.is_file():
         if path.suffix.lower() in (".jpg", ".jpeg", ".png"):
@@ -140,13 +162,15 @@ for path in sorted(docs.rglob("*")):
         s3_key = str(path.relative_to(docs))
         local_keys.add(s3_key)
         ct = mimetypes.guess_type(str(path))[0] or "application/octet-stream"
+        cc = get_cache_control(path)
         try:
-            s3_put(s3_key, str(path), ct)
+            s3_put(s3_key, str(path), ct, cc)
             print(f"OK   {s3_key}")
         except Exception as e:
             print(f"ERR  {s3_key}: {e}")
+            upload_errors += 1
 
-# Cleanup stale files in bucket
+# Cleanup stale files in bucket (non-fatal, may lack ListBucket/DeleteObject permissions)
 print("\n--- Checking for stale files ---")
 try:
     remote_keys = s3_list_all()
@@ -160,3 +184,6 @@ except Exception as e:
     print(f"Cleanup error (non-fatal): {e}")
 
 print("Done")
+if upload_errors:
+    print(f"\nFAILED with {upload_errors} error(s)")
+    sys.exit(1)

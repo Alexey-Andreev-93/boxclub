@@ -28,10 +28,4 @@ export default defineConfig({
     port: 3000,
   },
 
-  resolve: {
-    alias: {
-      '@': resolve(__dirname, 'js'),
-    },
-  },
-
 });
