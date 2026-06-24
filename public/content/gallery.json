@@ -76,6 +76,16 @@
       "date": "18.11.2023",
       "category": "Командные мероприятия",
       "featured": false
+    },
+    {
+      "id": 1782321094663,
+      "image": "/images/gallery/1782321125471-1000040350.jpg",
+      "title": "New",
+      "description": "Гуляемл",
+      "type": "training",
+      "badge": "New",
+      "date": "12.12.12",
+      "featured": false
     }
   ]
 }
